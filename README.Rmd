@@ -1,0 +1,158 @@
+---
+title: "Trinity and Transrate Tutorial"
+author: "Nate Olson"
+date: "May 2, 2016"
+output: html_document
+---
+```{r}
+library(knitr)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+```
+
+
+## Background 
+* Transcriptome
+* Transcriptome assembly
+      * Trinity
+* Transcriptome assembly evaluation
+      * Reference based
+      * Read based
+      * Transrate - contig level quality score
+* C. elegans transcriptome assembly and evaluation (what we did)
+
+## Assembly
+### Source data  
+* Dataset description  
+* Genbank accessions  
+
+### How to run trinity  
+* Link to website  
+* Parameter description
+* Command used to generate _C. elegans_ assembly
+
+### Assembly results  
+Assembly metrics calculated using Transrate, see http://hibberdlab.com/transrate/metrics.html for a description of the different metrics.  
+
+__TODO__  
+* Better summary of assembly metrics  
+```{r}
+read_csv("data/assemblies.csv") %>% 
+      select(-assembly) %>% gather("metric","value") %>% 
+      kable(digits = 2,caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
+```
+
+
+## Assembly evaluation
+### Running transrate
+* Installation
+      * Precompiled binaries available from website (http://hibberdlab.com/transrate/), along with instructions to build from source
+      * also command to install dependencies `transrate --install-deps type` where type can be either `all`, `read`, or `ref`.
+      * See Transrate website for additional information for install. 
+
+* Commandline
+
+```
+transrate \
+  --left=SRR2969230_1.fastq \
+  --right=SRR2969230_2.fastq \
+  --assembly=Trinity_sequences.Trinity.fixed.fasta \
+  --output=transrate/
+```
+
+* Parameters 
+
+```
+Transrate v1.0.2
+by Richard Smith-Unna, Chris Boursnell, Rob Patro,
+   Julian Hibberd, and Steve Kelly
+
+DESCRIPTION:
+Analyse a de-novo transcriptome assembly using three kinds of metrics:
+
+1. sequence based (if --assembly is given)
+2. read mapping based (if --left and --right are given)
+3. reference based (if --reference is given)
+
+Documentation at http://hibberdlab.com/transrate
+
+USAGE:
+transrate <options>
+
+OPTIONS:
+  --assembly=<s>            Assembly file(s) in FASTA format, comma-separated
+  --left=<s>                Left reads file(s) in FASTQ format, comma-separated
+  --right=<s>               Right reads file(s) in FASTQ format, comma-separated
+  --reference=<s>           Reference proteome or transcriptome file in FASTA format
+  --threads=<i>             Number of threads to use (default: 8)
+  --merge-assemblies=<s>    Merge best contigs from multiple assemblies into file
+  --output=<s>              Directory where results are output (will be created) (default: transrate_results)
+  --loglevel=<s>            Log level. One of [error, info, warn, debug] (default: info)
+  --install-deps=<s>        Install any missing dependencies. One of [ref]
+  --examples                Show some example commands with explanations
+```
+
+### Transrate results
+#### run time
+- real    890m58.016s
+- user    6665m50.869s
+- sys     11m5.890s
+
+* Description of output files
+      * assemblies.csv - assembly summary metrics (Table X)
+
+
+#### Contig level read mapping stats
+```{r}
+bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
+bam_stat
+```
+
+#### Assembly Score Optimization
+```{r}
+assembly_score_opt <- read_csv("data/Trinity_sequences.Trinity.fixed/assembly_score_optimisation.csv") 
+```
+
+Relationship between the cutoff for contig score and assembly score.
+```{r}
+assembly_score_opt %>% 
+      ggplot() + geom_path(aes(x = cutoff, assembly_score)) +
+            theme_bw() +
+            labs(x = "Contig Score Threshold", y = "Assembly Score")
+```
+
+Contigs
+```{r}
+contig_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/contigs.csv")
+contig_stat
+```
+
+Contig Score Distribution
+```{r}
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = score))
+```
+
+Relationship between contig score and length. 
+```{r}
+contig_stat %>% 
+      ggplot() + geom_hex(aes(x = length, y = score)) +
+            theme_bw() +
+            labs(x = "Contig Length (bp)", y = "Contig Score")
+```
+
+
+
+### Transrate-paper method results
+* Github repository for paper 
+* ability to rerun analysis - reproducible research
+* https://github.com/blahah/transrate-paper
+
+## Conclusions
+* How did Trinity do?
+* How did transrate compare to other methods?
+* Recommendations for transcriptome assembly and evaluation
+

@@ -1,0 +1,64 @@
+[ INFO] 2016-04-12 21:05:52 : Loading assembly: /cbcb/project2-scratch/nolson/cmsc702_project/data/celegans/assembly/Trinity_sequences.Trinity.fixed.fasta
+[ INFO] 2016-04-12 21:06:05 : Analysing assembly: /cbcb/project2-scratch/nolson/cmsc702_project/data/celegans/assembly/Trinity_sequences.Trinity.fixed.fasta
+[ INFO] 2016-04-12 21:06:05 : Results will be saved in /cbcb/project2-scratch/nolson/cmsc702_project/analysis/celegans/transrate/Trinity_sequences.Trinity.fixed
+[ INFO] 2016-04-12 21:06:05 : Calculating contig metrics...
+[ INFO] 2016-04-12 21:06:18 : Contig metrics:
+[ INFO] 2016-04-12 21:06:18 : -----------------------------------
+[ INFO] 2016-04-12 21:06:18 : n seqs                        63353
+[ INFO] 2016-04-12 21:06:18 : smallest                        224
+[ INFO] 2016-04-12 21:06:18 : largest                        5446
+[ INFO] 2016-04-12 21:06:18 : n bases                    27876618
+[ INFO] 2016-04-12 21:06:18 : mean len                     440.02
+[ INFO] 2016-04-12 21:06:18 : n under 200                       0
+[ INFO] 2016-04-12 21:06:18 : n over 1k                      2347
+[ INFO] 2016-04-12 21:06:18 : n over 10k                        0
+[ INFO] 2016-04-12 21:06:18 : n with orf                    12426
+[ INFO] 2016-04-12 21:06:18 : mean orf percent               76.4
+[ INFO] 2016-04-12 21:06:18 : n90                             261
+[ INFO] 2016-04-12 21:06:18 : n70                             349
+[ INFO] 2016-04-12 21:06:18 : n50                             465
+[ INFO] 2016-04-12 21:06:18 : n30                             641
+[ INFO] 2016-04-12 21:06:18 : n10                            1050
+[ INFO] 2016-04-12 21:06:18 : gc                             0.42
+[ INFO] 2016-04-12 21:06:18 : gc skew                        0.01
+[ INFO] 2016-04-12 21:06:18 : at skew                        -0.0
+[ INFO] 2016-04-12 21:06:18 : cpg ratio                      1.97
+[ INFO] 2016-04-12 21:06:18 : bases n                           0
+[ INFO] 2016-04-12 21:06:18 : proportion n                    0.0
+[ INFO] 2016-04-12 21:06:18 : linguistic complexity          0.09
+[ INFO] 2016-04-12 21:06:18 : Contig metrics done in 14 seconds
+[ INFO] 2016-04-12 21:06:18 : Calculating read diagnostics...
+[ INFO] 2016-04-13 11:56:17 : Read mapping metrics:
+[ INFO] 2016-04-13 11:56:17 : -----------------------------------
+[ INFO] 2016-04-13 11:56:17 : fragments                  35763023
+[ INFO] 2016-04-13 11:56:17 : fragments mapped           25107946
+[ INFO] 2016-04-13 11:56:17 : p fragments mapped              0.7
+[ INFO] 2016-04-13 11:56:17 : good mappings              10918012
+[ INFO] 2016-04-13 11:56:17 : p good mapping                 0.31
+[ INFO] 2016-04-13 11:56:17 : bad mappings               14189934
+[ INFO] 2016-04-13 11:56:17 : potential bridges             29681
+[ INFO] 2016-04-13 11:56:17 : bases uncovered             3961029
+[ INFO] 2016-04-13 11:56:17 : p bases uncovered              0.14
+[ INFO] 2016-04-13 11:56:17 : contigs uncovbase             44026
+[ INFO] 2016-04-13 11:56:17 : p contigs uncovbase            0.69
+[ INFO] 2016-04-13 11:56:17 : contigs uncovered              8835
+[ INFO] 2016-04-13 11:56:17 : p contigs uncovered            0.14
+[ INFO] 2016-04-13 11:56:17 : contigs lowcovered            40648
+[ INFO] 2016-04-13 11:56:17 : p contigs lowcovered           0.64
+[ INFO] 2016-04-13 11:56:17 : contigs segmented             12294
+[ INFO] 2016-04-13 11:56:17 : p contigs segmented            0.19
+[ INFO] 2016-04-13 11:56:17 : Read metrics done in 53399 seconds
+[ INFO] 2016-04-13 11:56:17 : No reference provided, skipping comparative diagnostics
+[ INFO] 2016-04-13 11:56:30 : TRANSRATE ASSEMBLY SCORE     0.0225
+[ INFO] 2016-04-13 11:56:30 : -----------------------------------
+[ INFO] 2016-04-13 11:56:30 : TRANSRATE OPTIMAL SCORE       0.068
+[ INFO] 2016-04-13 11:56:30 : TRANSRATE OPTIMAL CUTOFF     0.1884
+[ INFO] 2016-04-13 11:56:30 : good contigs                  25159
+[ INFO] 2016-04-13 11:56:30 : p good contigs                  0.4
+[ INFO] 2016-04-13 11:56:30 : Writing contig metrics for each contig to /cbcb/project2-scratch/nolson/cmsc702_project/analysis/celegans/transrate/Trinity_sequences.Trinity.fixed/contigs.csv
+[ INFO] 2016-04-13 11:56:48 : Writing analysis results to assemblies.csv
+
+real	890m58.016s
+user	6665m50.869s
+sys	11m5.890s
+Pseudo-terminal will not be allocated because stdin is not a terminal.
