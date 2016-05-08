@@ -37,8 +37,6 @@ Relevant _C. elegans_ Reference Sequences
 ### Assembly results  
 Assembly metrics calculated using Transrate, see http://hibberdlab.com/transrate/metrics.html for a description of the different metrics.  
 
-__TODO__  
-* Better summary of assembly metrics  
 
 ```r
 assembly_metrics_df <- list(no_mods = "data/no_mods/", 
@@ -83,6 +81,9 @@ trimmedcorrected     42851        224   532      6816        10645
 
 
 __Command Line__  
+
+_Read Based_
+
 ```
 transrate \
   --left=SRR2969230_1.fastq \
@@ -91,36 +92,12 @@ transrate \
   --output=transrate/
 ```
 
-* Parameters 
-
+_Reference Based_
 ```
-Transrate v1.0.2
-by Richard Smith-Unna, Chris Boursnell, Rob Patro,
-   Julian Hibberd, and Steve Kelly
-
-DESCRIPTION:
-Analyse a de-novo transcriptome assembly using three kinds of metrics:
-
-1. sequence based (if --assembly is given)
-2. read mapping based (if --left and --right are given)
-3. reference based (if --reference is given)
-
-Documentation at http://hibberdlab.com/transrate
-
-USAGE:
-transrate <options>
-
-OPTIONS:
-  --assembly=<s>            Assembly file(s) in FASTA format, comma-separated
-  --left=<s>                Left reads file(s) in FASTQ format, comma-separated
-  --right=<s>               Right reads file(s) in FASTQ format, comma-separated
-  --reference=<s>           Reference proteome or transcriptome file in FASTA format
-  --threads=<i>             Number of threads to use (default: 8)
-  --merge-assemblies=<s>    Merge best contigs from multiple assemblies into file
-  --output=<s>              Directory where results are output (will be created) (default: transrate_results)
-  --loglevel=<s>            Log level. One of [error, info, warn, debug] (default: info)
-  --install-deps=<s>        Install any missing dependencies. One of [ref]
-  --examples                Show some example commands with explanations
+transrate \
+  --reference=Caenorhabditis_elegans.WBcel235.31.pep.all.fa \
+  --assembly=Trinity_sequences.Trinity.fixed.fasta \
+  --output=transrate/
 ```
 
 ### Transrate results
@@ -128,6 +105,8 @@ The unmodified read set was passed as input to Transrate,
 potentally biasing some metric results towards the unmodifed assembly.
 
 #### run time
+__TODO__ Add runtime for other assemblies and reference based evaluations  
+
 - real    890m58.016s
 - user    6665m50.869s
 - sys     11m5.890s
@@ -158,12 +137,6 @@ trimmed               0.22            0.07    0.03       0.67
 trimmedcorrected      0.07            0.06    0.03       0.78
 
 
-#### Contig level read mapping stats
-
-```r
-# bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
-```
-
 #### Assembly Score Optimization
 
 ```r
@@ -184,7 +157,7 @@ assembly_score_opt %>%
 ## Warning: Removed 2 rows containing missing values (geom_path).
 ```
 
-![](README_files/figure-html/unnamed-chunk-6-1.png)
+![](README_files/figure-html/unnamed-chunk-5-1.png)
 
 ### Contigs
 
@@ -213,7 +186,7 @@ contig_stat %>%
                               alpha = 0.25) + theme_bw()
 ```
 
-![](README_files/figure-html/unnamed-chunk-8-1.png)
+![](README_files/figure-html/unnamed-chunk-7-1.png)
 
 
 Relationship between contig score and length. 
@@ -271,7 +244,7 @@ contig_stat %>%
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](README_files/figure-html/unnamed-chunk-9-1.png)
+![](README_files/figure-html/unnamed-chunk-8-1.png)
 
 
 ```r
@@ -288,7 +261,7 @@ contig_stat %>%
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](README_files/figure-html/unnamed-chunk-10-1.png)
+![](README_files/figure-html/unnamed-chunk-9-1.png)
 
 
 ```r
@@ -305,7 +278,7 @@ contig_stat %>%
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 ```
 
-![](README_files/figure-html/unnamed-chunk-11-1.png)
+![](README_files/figure-html/unnamed-chunk-10-1.png)
 
 The individual parameters used to calculate the contig score are weakly correlated. 
 Correlation values are similar to thoes presented in the Transrate publication. 
@@ -321,74 +294,88 @@ for(i in names(results_list)){
 }
 ```
 
-![](README_files/figure-html/unnamed-chunk-12-1.png)![](README_files/figure-html/unnamed-chunk-12-2.png)![](README_files/figure-html/unnamed-chunk-12-3.png)![](README_files/figure-html/unnamed-chunk-12-4.png)
+![](README_files/figure-html/unnamed-chunk-11-1.png)![](README_files/figure-html/unnamed-chunk-11-2.png)![](README_files/figure-html/unnamed-chunk-11-3.png)![](README_files/figure-html/unnamed-chunk-11-4.png)
+
+#### Reference Based Results
+__TODO__ Describe CRB method
+
 
 
 
 ```r
-minmap <- read_tsv("../analysis/celegans/minimap_trinity_cds.pfa",
-                   col_names = c("ref_id","ref_tran_len","ref_start","ref_end",
-                                 "break","t_id","t_contig_len","t_start","t_end",
-                                 "ref_aln_len", "t_aln_len","aln_score","aln_met"))
+ref_contig <- results_list %>% map(paste0,"contigs.csv") %>% 
+      map_df(read_csv, .id = "read_set")
 ```
 
-Total transcripts in reference with hits 102766
-
-Number of contigs mapping to each contig
+Comprison of contigs with and with out CRB hits. Assemblies using untrimmed read set had a larger number of contigs, but little impact of the proportion of CRB hits.
 
 ```r
-count_sum <- minmap %>% group_by(ref_id, t_id) %>% summarize(aln_count = n()) 
-count_sum %>% filter(aln_count < 10) %>% 
-      ggplot() + geom_density(aes(x = aln_count))
+ggplot(ref_contig) + geom_bar(aes(x = read_set)) + facet_wrap(~has_crb)
+```
+
+![](README_files/figure-html/unnamed-chunk-13-1.png)
+
+Comprison of contig length and ORF length for contigs with and without CRB hits. 
+Contigs with CRB hits were long and contined larger predicted ORFs.  
+
+
+```r
+ggplot(ref_contig) + geom_boxplot(aes(x = has_crb, y = length)) + facet_wrap(~read_set)
 ```
 
 ![](README_files/figure-html/unnamed-chunk-14-1.png)
 
-Contigs map to most contigs more than once with a number of contigs having more than 10 and with over 300 aligning to one reference transcript.
-
-
-c_elegans_ref_genome/Caenorhabditis_elegans.WBcel235.31.pep.all.fa
 
 ```r
-count_sum %>% filter(aln_count > 10) %>% .$ref_id %>% unique() %>% length()
+ggplot(ref_contig) + geom_boxplot(aes(x = has_crb, y = orf_length)) + facet_wrap(~read_set)
 ```
 
-```
-## [1] 2422
-```
+![](README_files/figure-html/unnamed-chunk-15-1.png)
 
-Looking at the contig with 300
+Exploring contigs with CRB hits.  
 
 ```r
-#count_sum 
+crb_contig <- ref_contig %>% filter(has_crb == "true")
 ```
 
 
 ```r
-contig_stat_map <- minmap %>% mutate(contig_name = str_replace(t_id, "|","_")) %>% left_join(contig_stat)
+ggplot(crb_contig) + geom_hex(aes(x = length, y = reference_coverage)) + 
+      facet_wrap(~read_set)
 ```
 
-```
-## Joining by: "contig_name"
-```
-
-```r
-contig_stat_map <- contig_stat_map %>% mutate(aln_ratio = ref_aln_len/t_aln_len)
-```
+![](README_files/figure-html/unnamed-chunk-17-1.png)
 
 
 ```r
-# ggplot(contig_stat_map) + geom_point(aes(x = aln_ratio, y = score))
+ggplot(crb_contig) + geom_hex(aes(x = orf_length, y = reference_coverage)) +
+      facet_wrap(~read_set)
 ```
 
-__TODO__
-* Other factors of interest
-* Expore seq information for example high scoring and low scoring contigs
+![](README_files/figure-html/unnamed-chunk-18-1.png)
 
-### Transrate-paper method results
-* Github repository for paper 
-* ability to rerun analysis - reproducible research
-* https://github.com/blahah/transrate-paper
+
+### Contig Score and Hit Coverage
+
+```r
+contig_crb_score <- crb_contig %>% left_join(contig_stat)
+```
+
+```
+## Joining by: c("read_set", "contig_name", "length", "prop_gc", "gc_skew", "at_skew", "cpg_count", "cpg_ratio", "orf_length", "linguistic_complexity_6")
+```
+
+__TODO__ Better way to present relationship
+
+```r
+ggplot(contig_crb_score) + 
+      geom_hex(aes(x = reference_coverage, y = score)) +
+      facet_wrap(~read_set)
+```
+
+![](README_files/figure-html/unnamed-chunk-20-1.png)
+
+
 
 ## Conclusions
 * How did Trinity do?
