@@ -39,8 +39,17 @@ results_list <- list(
 
 ## Assembly
 ### Source data  
-* Dataset description  
-* Genbank accessions  
+Sequence data identified by searching SRA for _C. elegans_ and limiting results to RNA, identified a study for an Illumina HiSeq 2000, 94 bp paired end run. Accession SRR2969230 was used to generate and evaluate the assembly.
+
+> 
+Caenorhabditis elegans Transcriptome or Gene expression BioProject
+Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
+
+Relevant _C. elegans_ Reference Sequences  
+
+* Transcriptome: ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/gtf/caenorhabditis_elegans/Caenorhabditis_elegans.WBcel235.31.gtf.gz   
+* Genome: ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/dna/Caenorhabditis_elegans.WBcel235.31.dna.chromosome.*.fa.gz   
+* Proteome: ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/pep/Caenorhabditis_elegans.WBcel235.31.pep.all.fa.gz    
 
 ### How to run trinity  
 * Link to website  
@@ -50,8 +59,6 @@ results_list <- list(
 ### Assembly results  
 Assembly metrics calculated using Transrate, see http://hibberdlab.com/transrate/metrics.html for a description of the different metrics.  
 
-__TODO__  
-* Better summary of assembly metrics  
 ```{r}
 assembly_metrics_df <- list(no_mods = "data/no_mods/", 
                             corrected = "data/corrected/",
@@ -83,6 +90,9 @@ assembly_metrics_df %>%
 
 
 __Command Line__  
+
+_Read Based_
+
 ```
 transrate \
   --left=SRR2969230_1.fastq \
@@ -91,36 +101,12 @@ transrate \
   --output=transrate/
 ```
 
-* Parameters 
-
+_Reference Based_
 ```
-Transrate v1.0.2
-by Richard Smith-Unna, Chris Boursnell, Rob Patro,
-   Julian Hibberd, and Steve Kelly
-
-DESCRIPTION:
-Analyse a de-novo transcriptome assembly using three kinds of metrics:
-
-1. sequence based (if --assembly is given)
-2. read mapping based (if --left and --right are given)
-3. reference based (if --reference is given)
-
-Documentation at http://hibberdlab.com/transrate
-
-USAGE:
-transrate <options>
-
-OPTIONS:
-  --assembly=<s>            Assembly file(s) in FASTA format, comma-separated
-  --left=<s>                Left reads file(s) in FASTQ format, comma-separated
-  --right=<s>               Right reads file(s) in FASTQ format, comma-separated
-  --reference=<s>           Reference proteome or transcriptome file in FASTA format
-  --threads=<i>             Number of threads to use (default: 8)
-  --merge-assemblies=<s>    Merge best contigs from multiple assemblies into file
-  --output=<s>              Directory where results are output (will be created) (default: transrate_results)
-  --loglevel=<s>            Log level. One of [error, info, warn, debug] (default: info)
-  --install-deps=<s>        Install any missing dependencies. One of [ref]
-  --examples                Show some example commands with explanations
+transrate \
+  --reference=Caenorhabditis_elegans.WBcel235.31.pep.all.fa \
+  --assembly=Trinity_sequences.Trinity.fixed.fasta \
+  --output=transrate/
 ```
 
 ### Transrate results
@@ -128,6 +114,8 @@ The unmodified read set was passed as input to Transrate,
 potentally biasing some metric results towards the unmodifed assembly.
 
 #### run time
+__TODO__ Add runtime for other assemblies and reference based evaluations  
+
 - real    890m58.016s
 - user    6665m50.869s
 - sys     11m5.890s
@@ -145,11 +133,6 @@ assembly_metrics_df %>%
             caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
 ```
 
-
-#### Contig level read mapping stats
-```{r}
-# bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
-```
 
 #### Assembly Score Optimization
 ```{r}
@@ -273,8 +256,6 @@ count_sum %>% filter(aln_count < 10) %>%
 
 Contigs map to most contigs more than once with a number of contigs having more than 10 and with over 300 aligning to one reference transcript.
 
-
-c_elegans_ref_genome/Caenorhabditis_elegans.WBcel235.31.pep.all.fa
 ```{r}
 count_sum %>% filter(aln_count > 10) %>% .$ref_id %>% unique() %>% length()
 ```
