@@ -1,0 +1,106 @@
+[2016-05-08 03:45:30.212] [fileLog] [info] quantification processed 0 fragments so far
+
+[2016-05-08 03:45:33.548] [fileLog] [info] quantification processed 1000000 fragments so far
+
+[2016-05-08 03:45:39.637] [fileLog] [info] quantification processed 2000000 fragments so far
+
+[2016-05-08 03:45:44.274] [jointLog] [info] 
+
+The alignment group queue pool has been exhausted.  7332453 extra fragments were allocated on the heap to saturate the pool.  No new fragments will be allocated
+
+
+[2016-05-08 03:45:47.004] [fileLog] [info] quantification processed 3000000 fragments so far
+
+[2016-05-08 03:46:40.854] [fileLog] [info] quantification processed 4000000 fragments so far
+
+[2016-05-08 03:47:33.742] [fileLog] [info] quantification processed 5000000 fragments so far
+
+[2016-05-08 03:48:26.856] [fileLog] [info] quantification processed 6000000 fragments so far
+
+[2016-05-08 03:49:19.038] [fileLog] [info] quantification processed 7000000 fragments so far
+
+[2016-05-08 03:49:24.328] [fileLog] [info] quantification processed 8000000 fragments so far
+
+[2016-05-08 03:49:29.757] [fileLog] [info] quantification processed 9000000 fragments so far
+
+[2016-05-08 03:49:35.190] [fileLog] [info] quantification processed 10000000 fragments so far
+
+[2016-05-08 03:49:40.632] [fileLog] [info] quantification processed 11000000 fragments so far
+
+[2016-05-08 03:49:46.232] [fileLog] [info] quantification processed 12000000 fragments so far
+
+[2016-05-08 03:49:51.977] [fileLog] [info] quantification processed 13000000 fragments so far
+
+[2016-05-08 03:49:58.947] [fileLog] [info] quantification processed 14000000 fragments so far
+
+[2016-05-08 03:50:05.815] [fileLog] [info] quantification processed 15000000 fragments so far
+
+[2016-05-08 03:50:11.223] [fileLog] [info] quantification processed 16000000 fragments so far
+
+[2016-05-08 03:50:16.049] [fileLog] [info] quantification processed 17000000 fragments so far
+
+[2016-05-08 03:50:22.402] [fileLog] [info] quantification processed 18000000 fragments so far
+
+[2016-05-08 03:50:27.160] [fileLog] [info] quantification processed 19000000 fragments so far
+
+[2016-05-08 03:50:32.539] [fileLog] [info] quantification processed 20000000 fragments so far
+
+[2016-05-08 03:50:38.469] [fileLog] [info] quantification processed 21000000 fragments so far
+
+[2016-05-08 03:50:43.662] [fileLog] [info] quantification processed 22000000 fragments so far
+
+[2016-05-08 03:50:48.753] [fileLog] [info] quantification processed 23000000 fragments so far
+
+[2016-05-08 03:50:53.965] [fileLog] [info] quantification processed 24000000 fragments so far
+
+[2016-05-08 03:50:59.765] [fileLog] [info] quantification processed 25000000 fragments so far
+
+[2016-05-08 03:51:05.402] [fileLog] [info] quantification processed 26000000 fragments so far
+
+[2016-05-08 03:51:12.175] [fileLog] [info] quantification processed 27000000 fragments so far
+
+[2016-05-08 03:51:17.913] [fileLog] [info] quantification processed 28000000 fragments so far
+
+[2016-05-08 03:51:23.738] [fileLog] [info] quantification processed 29000000 fragments so far
+
+[2016-05-08 03:51:29.496] [fileLog] [info] quantification processed 30000000 fragments so far
+
+[2016-05-08 03:51:35.254] [fileLog] [info] quantification processed 31000000 fragments so far
+
+[2016-05-08 03:51:40.919] [fileLog] [info] quantification processed 32000000 fragments so far
+
+[2016-05-08 03:51:46.462] [fileLog] [info] quantification processed 33000000 fragments so far
+
+[2016-05-08 03:51:52.110] [fileLog] [info] quantification processed 34000000 fragments so far
+
+[2016-05-08 03:51:56.867] [fileLog] [info] quantification processed 34839366 fragments so far
+
+[2016-05-08 03:52:07.519] [jointLog] [info] 
+
+
+Completed first pass through the alignment file.
+Total # of mapped reads : 34839366
+# of uniquely mapped reads : 9599817
+# ambiguously mapped reads : 25239549
+
+
+
+[2016-05-08 03:52:11.523] [jointLog] [info] Computed 2575642 rich equivalence classes for further processing
+[2016-05-08 03:52:11.523] [jointLog] [info] starting optimizer
+[2016-05-08 03:52:11.860] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2016-05-08 03:52:12.345] [jointLog] [info] iteration = 0 | max rel diff. = 16.5588
+[2016-05-08 03:52:58.326] [jointLog] [info] iteration = 100 | max rel diff. = 9.31706
+[2016-05-08 03:53:42.771] [jointLog] [info] iteration = 200 | max rel diff. = 0.700712
+[2016-05-08 03:54:27.305] [jointLog] [info] iteration = 300 | max rel diff. = 0.184347
+[2016-05-08 03:55:11.886] [jointLog] [info] iteration = 400 | max rel diff. = 0.0126271
+[2016-05-08 03:55:56.442] [jointLog] [info] iteration = 500 | max rel diff. = 0.0567631
+[2016-05-08 03:56:41.081] [jointLog] [info] iteration = 600 | max rel diff. = 0.0220579
+[2016-05-08 03:57:00.081] [jointLog] [info] iteration = 643 | max rel diff. = 0.00417469
+[2016-05-08 03:57:00.082] [jointLog] [info] finished optimizer
+[2016-05-08 03:57:00.288] [jointLog] [info] Sampling alignments; outputting results to ./postSample.bam
+
+[2016-05-08 03:57:00.448] [jointLog] [info] 
+
+The alignment group queue pool has been exhausted.  0 extra fragments were allocated on the heap to saturate the pool.  No new fragments will be allocated
+
+
