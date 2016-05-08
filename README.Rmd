@@ -5,25 +5,36 @@ date: "May 2, 2016"
 output:
   html_document:
     keep_md: true
+bibliography: tutorial.bib 
 ---
-```{r}
+```{r setup, warning=FALSE, message=FALSE, echo = FALSE}
 library(knitr)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(purrr)
 library(stringr)
 library(ggplot2)
+library(GGally)
 ```
 
+```{r}
+results_list <- list(
+      no_mods = "data/no_mods/Trinity_sequences.Trinity.fixed/",
+      corrected = "data/corrected/Assembly4_Corrected.Trinity.fixed/",
+      trimmed = "data/trimmed/Assembly2_Trimmed.Trinity.fixed/",
+      trimmedcorrected = "data/trimmedcorrected/Assembly3_TrimmedCorrected.Trinity.fixed/"
+)
+```
 
 ## Background 
 * Transcriptome
 * Transcriptome assembly
-      * Trinity
+      * Trinity [@haas2013novo]
 * Transcriptome assembly evaluation
       * Reference based
       * Read based
-      * Transrate - contig level quality score
+      * Transrate - contig level quality score [@smith2015transrate]
 * C. elegans transcriptome assembly and evaluation (what we did)
 
 ## Assembly
@@ -42,11 +53,26 @@ Assembly metrics calculated using Transrate, see http://hibberdlab.com/transrate
 __TODO__  
 * Better summary of assembly metrics  
 ```{r}
-read_csv("data/assemblies.csv") %>% 
-      select(-assembly) %>% gather("metric","value") %>% 
-      kable(digits = 2,caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
+assembly_metrics_df <- list(no_mods = "data/no_mods/", 
+                            corrected = "data/corrected/",
+                            trimmed = "data/trimmed/", 
+                            trimmedcorrected = "data/trimmedcorrected/") %>% 
+      map(paste0, "assemblies.csv") %>%  
+      map_df(read_csv, .id = "read_set") %>% 
+      select(-assembly) %>% 
+      gather("metric","value", -read_set) 
 ```
 
+__TODO__ Need to workout `read_set` order
+```{r}
+assembly_metrics_df %>% 
+      filter(metric %in% c("n_seqs", "smallest", "largest", 
+                           "n50", "n_with_orf")) %>%
+      spread(metric, value) %>% 
+      select(read_set, n_seqs, smallest, n50, largest, n_with_orf) %>% 
+      kable(digits = 2,
+            caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
+```
 
 ## Assembly evaluation
 ### Running transrate
@@ -55,8 +81,8 @@ read_csv("data/assemblies.csv") %>%
       * also command to install dependencies `transrate --install-deps type` where type can be either `all`, `read`, or `ref`.
       * See Transrate website for additional information for install. 
 
-* Commandline
 
+__Command Line__  
 ```
 transrate \
   --left=SRR2969230_1.fastq \
@@ -98,55 +124,178 @@ OPTIONS:
 ```
 
 ### Transrate results
+The unmodified read set was passed as input to Transrate, 
+potentally biasing some metric results towards the unmodifed assembly.
+
 #### run time
 - real    890m58.016s
 - user    6665m50.869s
 - sys     11m5.890s
 
-* Description of output files
-      * assemblies.csv - assembly summary metrics (Table X)
+#### Assembly Scores
+Read trimming and error correction resulted in the highest weighted assembly score, 
+while having the lowest contig score cutoff, 
+but a lower optimal score.  
+
+```{r}
+assembly_metrics_df %>% 
+      filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
+      spread(metric, value) %>% 
+      kable(digits = 2,
+            caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
+```
 
 
 #### Contig level read mapping stats
 ```{r}
-bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
-bam_stat
+# bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
 ```
 
 #### Assembly Score Optimization
 ```{r}
-assembly_score_opt <- read_csv("data/Trinity_sequences.Trinity.fixed/assembly_score_optimisation.csv") 
+assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
+      map_df(read_csv, .id = "read_set")
 ```
 
 Relationship between the cutoff for contig score and assembly score.
 ```{r}
 assembly_score_opt %>% 
-      ggplot() + geom_path(aes(x = cutoff, assembly_score)) +
+      ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
             theme_bw() +
             labs(x = "Contig Score Threshold", y = "Assembly Score")
 ```
 
-Contigs
+### Contigs
 ```{r}
-contig_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/contigs.csv")
-contig_stat
+contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
+      map_df(read_csv, .id = "read_set")
+
+contig_cutoff <- assembly_metrics_df %>% filter(metric == "cutoff") %>% 
+      select(-metric) %>% rename(cutoff = value)
+contig_stat <- contig_stat %>% left_join(contig_cutoff) %>% 
+      mutate(contig_filt = cutoff < score)
 ```
 
-Contig Score Distribution
+
+__Contig Score Distribution__
+Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 then assemblies using unmodified reads or only error corrected reads.  
+
 ```{r}
 contig_stat %>% 
-      ggplot() + geom_histogram(aes(x = score))
+      ggplot() + geom_density(aes(x = score, color = read_set, fill = read_set), 
+                              alpha = 0.25) + theme_bw()
 ```
+
 
 Relationship between contig score and length. 
-```{r}
+```{r score_length, fig.cap = "2D histogram of contig score and legnth, with color indicating abundance. Grey dotted lines are the contig score cutoff for optimal assembly score."}
 contig_stat %>% 
       ggplot() + geom_hex(aes(x = length, y = score)) +
+            geom_hline(aes(yintercept = cutoff), 
+                       color = "grey60", linetype = 2) +
             theme_bw() +
-            labs(x = "Contig Length (bp)", y = "Contig Score")
+            labs(x = "Contig Length (bp)", y = "Contig Score") +
+            facet_wrap(~read_set)
+```
+
+Proportion of bases in reads map to the transcript that agree with the transcript contig. 
+
+```{r p_good_density, fig.cap = "Histogram of the proportion of bases in agreement with contig and contig length."}
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_good)) +
+            theme_bw() +
+            labs(x = "Proportion of Bases Aggree with Transcript",
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+Proportion of bases coverage by mapped reads.
+```{r}
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_bases_covered)) +
+            theme_bw() +
+            labs(x = "Proportion of Covered Bases", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+```{r}
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_seq_true)) +
+            theme_bw() +
+            labs(x = "Proportion Seq Correct", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+```{r}
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_not_segmented)) +
+            theme_bw() +
+            labs(x = "Proportion of Non-Segmented Contigs", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+The individual parameters used to calculate the contig score are weakly correlated. 
+Correlation values are similar to thoes presented in the Transrate publication. 
+
+```{r}
+for(i in names(results_list)){
+      pl <- contig_stat %>% filter(read_set == i) %>% 
+            select(p_good, p_bases_covered, p_seq_true, p_not_segmented) %>% 
+            ggcorr(method = c("pairwise","spearman"),label = TRUE) + 
+                  ggtitle(i)
+      print(pl)
+}
 ```
 
 
+```{r}
+minmap <- read_tsv("../analysis/celegans/minimap_trinity_cds.pfa",
+                   col_names = c("ref_id","ref_tran_len","ref_start","ref_end",
+                                 "break","t_id","t_contig_len","t_start","t_end",
+                                 "ref_aln_len", "t_aln_len","aln_score","aln_met"))
+```
+
+Total transcripts in reference with hits `r unique(minmap$ref_id) %>% length()`
+
+Number of contigs mapping to each contig
+```{r}
+count_sum <- minmap %>% group_by(ref_id, t_id) %>% summarize(aln_count = n()) 
+count_sum %>% filter(aln_count < 10) %>% 
+      ggplot() + geom_density(aes(x = aln_count))
+```
+
+Contigs map to most contigs more than once with a number of contigs having more than 10 and with over 300 aligning to one reference transcript.
+
+
+c_elegans_ref_genome/Caenorhabditis_elegans.WBcel235.31.pep.all.fa
+```{r}
+count_sum %>% filter(aln_count > 10) %>% .$ref_id %>% unique() %>% length()
+```
+
+Looking at the contig with 300
+```{r}
+#count_sum 
+```
+
+```{r}
+contig_stat_map <- minmap %>% mutate(contig_name = str_replace(t_id, "|","_")) %>% left_join(contig_stat)
+contig_stat_map <- contig_stat_map %>% mutate(aln_ratio = ref_aln_len/t_aln_len)
+```
+
+```{r}
+# ggplot(contig_stat_map) + geom_point(aes(x = aln_ratio, y = score))
+```
+
+__TODO__
+* Other factors of interest
+* Expore seq information for example high scoring and low scoring contigs
 
 ### Transrate-paper method results
 * Github repository for paper 
@@ -158,3 +307,11 @@ contig_stat %>%
 * How did transrate compare to other methods?
 * Recommendations for transcriptome assembly and evaluation
 
+## Session Information
+__Session Info__
+```{r s_info}
+s_info <- devtools::session_info()
+print(s_info$platform)
+kable(s_info$packages)
+```
+## References
