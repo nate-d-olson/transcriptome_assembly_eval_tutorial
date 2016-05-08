@@ -1,0 +1,46 @@
+Transcriptome Assembly and Evaluation Tutorial
+========================================================
+author: Nate Olson and Leann Biancani
+date: 5/11/2016
+autosize: true
+
+Introduction
+========================================================
+
+- Transcriptomics
+- Transcriptome Assembly
+- Transcriptome Evaluation
+
+Tutorial Overview
+========================================================
+- Dataset
+- Assembly
+      - Read Trimming
+      - Error Correction
+- Evaluation
+
+C. elegans Dataset
+========================================================
+
+- Seq data
+- Trimming and Error correction
+
+Assembly Results
+========================================================
+
+- Assembly Metrics comparison
+
+Assembly Evaluation
+========================================================
+
+- score distributions
+
+Reference Alignment
+========================================================
+
+- alignment results
+
+Conclusions
+=======================================================
+- Trinity 
+- Impact of trimmed and error correction
