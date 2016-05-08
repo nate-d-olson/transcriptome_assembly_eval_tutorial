@@ -18,7 +18,7 @@ library(ggplot2)
 library(GGally)
 ```
 
-```{r}
+```{r source_dir, warning=FALSE, message=FALSE, echo = FALSE}
 results_list <- list(
       no_mods = "data/no_mods/Trinity_sequences.Trinity.fixed/",
       corrected = "data/corrected/Assembly4_Corrected.Trinity.fixed/",

@@ -2,44 +2,17 @@
 Nate Olson  
 May 2, 2016  
 
-```r
-library(knitr)
-library(readr)
-library(dplyr)
-```
 
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
-library(tidyr)
-library(stringr)
-library(ggplot2)
-```
 
 
 ## Background 
 * Transcriptome
 * Transcriptome assembly
-      * Trinity
+      * Trinity [@haas2013novo]
 * Transcriptome assembly evaluation
       * Reference based
       * Read based
-      * Transrate - contig level quality score
+      * Transrate - contig level quality score [@smith2015transrate]
 * C. elegans transcriptome assembly and evaluation (what we did)
 
 ## Assembly
@@ -59,61 +32,38 @@ __TODO__
 * Better summary of assembly metrics  
 
 ```r
-read_csv("data/assemblies.csv") %>% 
-      select(-assembly) %>% gather("metric","value") %>% 
-      kable(digits = 2,caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
+assembly_metrics_df <- list(no_mods = "data/no_mods/", 
+                            corrected = "data/corrected/",
+                            trimmed = "data/trimmed/", 
+                            trimmedcorrected = "data/trimmedcorrected/") %>% 
+      map(paste0, "assemblies.csv") %>%  
+      map_df(read_csv, .id = "read_set") %>% 
+      select(-assembly) %>% 
+      gather("metric","value", -read_set) 
+```
+
+__TODO__ Need to workout `read_set` order
+
+```r
+assembly_metrics_df %>% 
+      filter(metric %in% c("n_seqs", "smallest", "largest", 
+                           "n50", "n_with_orf")) %>%
+      spread(metric, value) %>% 
+      select(read_set, n_seqs, smallest, n50, largest, n_with_orf) %>% 
+      kable(digits = 2,
+            caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
 ```
 
 
 
 Table: Trinity _C. elegans_ transcriptome assembly summary metrics.
 
-metric                         value
-----------------------  ------------
-n_seqs                      63353.00
-smallest                      224.00
-largest                      5446.00
-n_bases                  27876618.00
-mean_len                      440.02
-n_under_200                     0.00
-n_over_1k                    2347.00
-n_over_10k                      0.00
-n_with_orf                  12426.00
-mean_orf_percent               76.40
-n90                           261.00
-n70                           349.00
-n50                           465.00
-n30                           641.00
-n10                          1050.00
-gc                              0.42
-gc_skew                         0.01
-at_skew                         0.00
-cpg_ratio                       1.97
-bases_n                         0.00
-proportion_n                    0.00
-linguistic_complexity           0.09
-fragments                35763023.00
-fragments_mapped         25107946.00
-p_fragments_mapped              0.70
-good_mappings            10918012.00
-p_good_mapping                  0.31
-bad_mappings             14189934.00
-potential_bridges           29681.00
-bases_uncovered           3961029.00
-p_bases_uncovered               0.14
-contigs_uncovbase           44026.00
-p_contigs_uncovbase             0.69
-contigs_uncovered            8835.00
-p_contigs_uncovered             0.14
-contigs_lowcovered          40648.00
-p_contigs_lowcovered            0.64
-contigs_segmented           12294.00
-p_contigs_segmented             0.19
-score                           0.02
-optimal_score                   0.07
-cutoff                          0.19
-weighted                        0.54
-
+read_set            n_seqs   smallest   n50   largest   n_with_orf
+-----------------  -------  ---------  ----  --------  -----------
+corrected            61059        224   467      4364        12075
+no_mods              63353        224   465      5446        12426
+trimmed              42438        224   531      7533        10552
+trimmedcorrected     42851        224   532      6816        10645
 
 ## Assembly evaluation
 ### Running transrate
@@ -122,8 +72,8 @@ weighted                        0.54
       * also command to install dependencies `transrate --install-deps type` where type can be either `all`, `read`, or `ref`.
       * See Transrate website for additional information for install. 
 
-* Commandline
 
+__Command Line__  
 ```
 transrate \
   --left=SRR2969230_1.fastq \
@@ -165,117 +115,266 @@ OPTIONS:
 ```
 
 ### Transrate results
+The unmodified read set was passed as input to Transrate, 
+potentally biasing some metric results towards the unmodifed assembly.
+
 #### run time
 - real    890m58.016s
 - user    6665m50.869s
 - sys     11m5.890s
 
-* Description of output files
-      * assemblies.csv - assembly summary metrics (Table X)
+#### Assembly Scores
+Read trimming and error correction resulted in the highest weighted assembly score, 
+while having the lowest contig score cutoff, 
+but a lower optimal score.  
+
+
+```r
+assembly_metrics_df %>% 
+      filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
+      spread(metric, value) %>% 
+      kable(digits = 2,
+            caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
+```
+
+
+
+Table: Trinity _C. elegans_ transcriptome Transrate score summary.
+
+read_set            cutoff   optimal_score   score   weighted
+-----------------  -------  --------------  ------  ---------
+corrected             0.24            0.07    0.02       0.65
+no_mods               0.19            0.07    0.02       0.54
+trimmed               0.22            0.07    0.03       0.67
+trimmedcorrected      0.07            0.06    0.03       0.78
 
 
 #### Contig level read mapping stats
 
 ```r
-bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
-bam_stat
-```
-
-```
-## Source: local data frame [63,353 x 10]
-## 
-##            name p_seq_true bridges length fragments_mapped both_mapped
-##           (chr)      (dbl)   (int)  (int)            (int)       (int)
-## 1  TR1_c0_g1_i1   0.856907       2    760               59          58
-## 2  TR2_c0_g1_i1   0.898214       0    228                8           8
-## 3  TR3_c0_g1_i1   0.850286       0    403               12          11
-## 4  TR4_c0_g1_i1   0.876786       0    282                9           8
-## 5  TR5_c0_g1_i1   0.429740       1    235               14           5
-## 6  TR6_c0_g1_i1   0.754286       0    294                6           6
-## 7  TR7_c0_g1_i1   0.980952       3    230                3           3
-## 8  TR7_c0_g2_i1   0.821429       1    230                2           2
-## 9  TR8_c0_g1_i1   0.902041       0    313               14          14
-## 10 TR9_c0_g1_i1   0.957143       1    278                5           4
-## ..          ...        ...     ...    ...              ...         ...
-## Variables not shown: properpair (int), good (int), bases_uncovered (int),
-##   p_not_segmented (dbl).
+# bam_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/Trinity_sequences.Trinity.fixed.fasta_bam_info.csv")
 ```
 
 #### Assembly Score Optimization
 
 ```r
-assembly_score_opt <- read_csv("data/Trinity_sequences.Trinity.fixed/assembly_score_optimisation.csv") 
+assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
+      map_df(read_csv, .id = "read_set")
 ```
 
 Relationship between the cutoff for contig score and assembly score.
 
 ```r
 assembly_score_opt %>% 
-      ggplot() + geom_path(aes(x = cutoff, assembly_score)) +
+      ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
             theme_bw() +
             labs(x = "Contig Score Threshold", y = "Assembly Score")
 ```
 
 ```
-## Warning: Removed 1 rows containing missing values (geom_path).
+## Warning: Removed 2 rows containing missing values (geom_path).
 ```
 
-![](README_files/figure-html/unnamed-chunk-5-1.png)
+![](README_files/figure-html/unnamed-chunk-6-1.png)
 
-Contigs
+### Contigs
 
 ```r
-contig_stat <- read_csv("data/Trinity_sequences.Trinity.fixed/contigs.csv")
-contig_stat
+contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
+      map_df(read_csv, .id = "read_set")
+
+contig_cutoff <- assembly_metrics_df %>% filter(metric == "cutoff") %>% 
+      select(-metric) %>% rename(cutoff = value)
+contig_stat <- contig_stat %>% left_join(contig_cutoff) %>% 
+      mutate(contig_filt = cutoff < score)
 ```
 
 ```
-## Source: local data frame [63,353 x 19]
-## 
-##     contig_name length  prop_gc   gc_skew   at_skew cpg_count cpg_ratio
-##           (chr)  (int)    (dbl)     (dbl)     (dbl)     (int)     (dbl)
-## 1  TR1_c0_g1_i1    760 0.403947 -0.003257  0.077263        68  2.193362
-## 2  TR2_c0_g1_i1    228 0.486842 -0.153153 -0.247863        37  2.804521
-## 3  TR3_c0_g1_i1    403 0.411911  0.060241  0.037975        27  1.585227
-## 4  TR4_c0_g1_i1    282 0.340426 -0.041667  0.086022        15  1.839130
-## 5  TR5_c0_g1_i1    235 0.404255  0.010526 -0.071429        20  2.083333
-## 6  TR6_c0_g1_i1    294 0.445578  0.053435  0.276074        37  2.542777
-## 7  TR7_c0_g1_i1    230 0.395652 -0.384615 -0.251799        14  1.825397
-## 8  TR7_c0_g2_i1    230 0.400000 -0.282609 -0.217391        14  1.653826
-## 9  TR8_c0_g1_i1    313 0.399361 -0.024000 -0.063830        26  2.084529
-## 10 TR9_c0_g1_i1    278 0.453237  0.333333  0.197368        20  1.575964
-## ..          ...    ...      ...       ...       ...       ...       ...
-## Variables not shown: orf_length (int), linguistic_complexity_6 (dbl),
-##   in_bridges (int), p_good (dbl), p_bases_covered (dbl), p_seq_true (dbl),
-##   score (dbl), p_not_segmented (dbl), eff_length (int), eff_count (dbl),
-##   tpm (dbl), coverage (dbl).
+## Joining by: "read_set"
 ```
 
-Contig Score Distribution
+
+__Contig Score Distribution__
+Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 then assemblies using unmodified reads or only error corrected reads.  
+
 
 ```r
 contig_stat %>% 
-      ggplot() + geom_histogram(aes(x = score))
+      ggplot() + geom_density(aes(x = score, color = read_set, fill = read_set), 
+                              alpha = 0.25) + theme_bw()
 ```
 
-```
-## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-```
+![](README_files/figure-html/unnamed-chunk-8-1.png)
 
-![](README_files/figure-html/unnamed-chunk-7-1.png)
 
 Relationship between contig score and length. 
 
 ```r
 contig_stat %>% 
       ggplot() + geom_hex(aes(x = length, y = score)) +
+            geom_hline(aes(yintercept = cutoff), 
+                       color = "grey60", linetype = 2) +
             theme_bw() +
-            labs(x = "Contig Length (bp)", y = "Contig Score")
+            labs(x = "Contig Length (bp)", y = "Contig Score") +
+            facet_wrap(~read_set)
 ```
 
-![](README_files/figure-html/unnamed-chunk-8-1.png)
+<div class="figure">
+<img src="README_files/figure-html/score_length-1.png" alt="2D histogram of contig score and legnth, with color indicating abundance. Grey dotted lines are the contig score cutoff for optimal assembly score."  />
+<p class="caption">2D histogram of contig score and legnth, with color indicating abundance. Grey dotted lines are the contig score cutoff for optimal assembly score.</p>
+</div>
+
+Proportion of bases in reads map to the transcript that agree with the transcript contig. 
 
 
+```r
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_good)) +
+            theme_bw() +
+            labs(x = "Proportion of Bases Aggree with Transcript",
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+<div class="figure">
+<img src="README_files/figure-html/p_good_density-1.png" alt="Histogram of the proportion of bases in agreement with contig and contig length."  />
+<p class="caption">Histogram of the proportion of bases in agreement with contig and contig length.</p>
+</div>
+
+Proportion of bases coverage by mapped reads.
+
+```r
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_bases_covered)) +
+            theme_bw() +
+            labs(x = "Proportion of Covered Bases", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](README_files/figure-html/unnamed-chunk-9-1.png)
+
+
+```r
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_seq_true)) +
+            theme_bw() +
+            labs(x = "Proportion Seq Correct", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](README_files/figure-html/unnamed-chunk-10-1.png)
+
+
+```r
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_not_segmented)) +
+            theme_bw() +
+            labs(x = "Proportion of Non-Segmented Contigs", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+```
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+![](README_files/figure-html/unnamed-chunk-11-1.png)
+
+The individual parameters used to calculate the contig score are weakly correlated. 
+Correlation values are similar to thoes presented in the Transrate publication. 
+
+
+```r
+for(i in names(results_list)){
+      pl <- contig_stat %>% filter(read_set == i) %>% 
+            select(p_good, p_bases_covered, p_seq_true, p_not_segmented) %>% 
+            ggcorr(method = c("pairwise","spearman"),label = TRUE) + 
+                  ggtitle(i)
+      print(pl)
+}
+```
+
+![](README_files/figure-html/unnamed-chunk-12-1.png)![](README_files/figure-html/unnamed-chunk-12-2.png)![](README_files/figure-html/unnamed-chunk-12-3.png)![](README_files/figure-html/unnamed-chunk-12-4.png)
+
+
+
+```r
+minmap <- read_tsv("../analysis/celegans/minimap_trinity_cds.pfa",
+                   col_names = c("ref_id","ref_tran_len","ref_start","ref_end",
+                                 "break","t_id","t_contig_len","t_start","t_end",
+                                 "ref_aln_len", "t_aln_len","aln_score","aln_met"))
+```
+
+Total transcripts in reference with hits 102766
+
+Number of contigs mapping to each contig
+
+```r
+count_sum <- minmap %>% group_by(ref_id, t_id) %>% summarize(aln_count = n()) 
+count_sum %>% filter(aln_count < 10) %>% 
+      ggplot() + geom_density(aes(x = aln_count))
+```
+
+![](README_files/figure-html/unnamed-chunk-14-1.png)
+
+Contigs map to most contigs more than once with a number of contigs having more than 10 and with over 300 aligning to one reference transcript.
+
+
+c_elegans_ref_genome/Caenorhabditis_elegans.WBcel235.31.pep.all.fa
+
+```r
+count_sum %>% filter(aln_count > 10) %>% .$ref_id %>% unique() %>% length()
+```
+
+```
+## [1] 2422
+```
+
+Looking at the contig with 300
+
+```r
+#count_sum 
+```
+
+
+```r
+contig_stat_map <- minmap %>% mutate(contig_name = str_replace(t_id, "|","_")) %>% left_join(contig_stat)
+```
+
+```
+## Joining by: "contig_name"
+```
+
+```r
+contig_stat_map <- contig_stat_map %>% mutate(aln_ratio = ref_aln_len/t_aln_len)
+```
+
+
+```r
+# ggplot(contig_stat_map) + geom_point(aes(x = aln_ratio, y = score))
+```
+
+__TODO__
+* Other factors of interest
+* Expore seq information for example high scoring and low scoring contigs
 
 ### Transrate-paper method results
 * Github repository for paper 
@@ -287,3 +386,66 @@ contig_stat %>%
 * How did transrate compare to other methods?
 * Recommendations for transcriptome assembly and evaluation
 
+## Session Information
+__Session Info__
+
+```r
+s_info <- devtools::session_info()
+print(s_info$platform)
+```
+
+```
+##  setting  value                       
+##  version  R version 3.2.4 (2016-03-10)
+##  system   x86_64, darwin13.4.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_US.UTF-8                 
+##  tz       America/New_York            
+##  date     2016-05-08
+```
+
+```r
+kable(s_info$packages)
+```
+
+
+
+package      *    version      date         source                          
+-----------  ---  -----------  -----------  --------------------------------
+assertthat        0.1          2013-12-06   CRAN (R 3.2.0)                  
+colorspace        1.2-6        2015-03-11   CRAN (R 3.2.0)                  
+DBI               0.3.1        2014-09-24   CRAN (R 3.2.0)                  
+devtools          1.11.1       2016-04-21   CRAN (R 3.2.5)                  
+digest            0.6.9        2016-01-08   CRAN (R 3.2.3)                  
+dplyr        *    0.4.3.9000   2016-02-11   Github (hadley/dplyr@9bae2aa)   
+evaluate          0.8.3        2016-03-05   CRAN (R 3.2.4)                  
+formatR           1.3          2016-03-05   CRAN (R 3.2.4)                  
+GGally       *    1.0.1        2016-01-14   CRAN (R 3.2.3)                  
+ggplot2      *    2.1.0        2016-03-01   CRAN (R 3.2.4)                  
+gtable            0.2.0        2016-02-26   CRAN (R 3.2.3)                  
+hexbin       *    1.27.1       2015-08-19   CRAN (R 3.2.0)                  
+highr             0.5.1        2015-09-18   CRAN (R 3.2.1)                  
+htmltools         0.3.5        2016-03-21   CRAN (R 3.2.4)                  
+knitr        *    1.12.3       2016-01-22   CRAN (R 3.2.3)                  
+labeling          0.3          2014-08-23   CRAN (R 3.2.0)                  
+lattice           0.20-33      2015-07-14   CRAN (R 3.2.4)                  
+lazyeval          0.1.10       2015-01-02   CRAN (R 3.2.0)                  
+magrittr          1.5          2014-11-22   CRAN (R 3.2.0)                  
+memoise           1.0.0        2016-01-29   CRAN (R 3.2.3)                  
+munsell           0.4.3        2016-02-13   CRAN (R 3.2.3)                  
+plyr              1.8.3        2015-06-12   CRAN (R 3.2.0)                  
+purrr        *    0.2.1        2016-02-13   CRAN (R 3.2.3)                  
+R6                2.1.2        2016-01-26   CRAN (R 3.2.3)                  
+Rcpp              0.12.4       2016-03-26   CRAN (R 3.2.4)                  
+readr        *    0.2.2        2015-10-22   CRAN (R 3.2.0)                  
+reshape           0.8.5        2014-04-23   CRAN (R 3.2.0)                  
+reshape2          1.4.1        2014-12-06   CRAN (R 3.2.0)                  
+rmarkdown         0.9.5        2016-02-22   CRAN (R 3.2.3)                  
+scales            0.4.0        2016-02-26   CRAN (R 3.2.3)                  
+stringi           1.0-1        2015-10-22   CRAN (R 3.2.1)                  
+stringr      *    1.0.0.9000   2015-11-23   Github (hadley/stringr@a67f8f0) 
+tidyr        *    0.4.1        2016-02-05   CRAN (R 3.2.3)                  
+withr             1.0.1        2016-02-04   CRAN (R 3.2.3)                  
+yaml              2.1.13       2014-06-12   CRAN (R 3.2.0)                  
+## References
