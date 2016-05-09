@@ -29,8 +29,14 @@ results_list <- list(
 
 ## Background 
 * Transcriptome
-* Transcriptome assembly
-      * Trinity [@haas2013novo]
+      * RNAseq & transcriptomics (Wang et al. 2009)
+* De novo Transcriptome assembly
+      * Trinity (Grabherr et al. 2011) [@haas2013novo]
+      * Mention other de-novo assembly algorithms
+            * Oases (Schulz et al. 2012)
+            * SOAPdenovo-Trans (Xie et al. 2014)
+      * Variation in assemblies - same read data can generate very different assemblies (Smith et al. 2015)
+            * withing assembly methods: many parameters & heuristics to accommodated 
 * Transcriptome assembly evaluation
       * Reference based
       * Read based
