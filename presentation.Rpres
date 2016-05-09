@@ -1,3 +1,22 @@
+```{r setup, warning=FALSE, message=FALSE, echo = FALSE}
+library(knitr)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+library(ggplot2)
+```
+
+```{r source_dir, warning=FALSE, message=FALSE, echo = FALSE}
+results_list <- list(
+      no_mods = "data/no_mods/Trinity_sequences.Trinity.fixed/",
+      corrected = "data/corrected/Assembly4_Corrected.Trinity.fixed/",
+      trimmed = "data/trimmed/Assembly2_Trimmed.Trinity.fixed/",
+      trimmedcorrected = "data/trimmedcorrected/Assembly3_TrimmedCorrected.Trinity.fixed/"
+)
+```
+
 Transcriptome Assembly and Evaluation Tutorial
 ========================================================
 author: Nate Olson and Leann Biancani
@@ -55,24 +74,127 @@ Assembly Methods
 
 Assembly Results
 ========================================================
+__Metrics__
+* n_seq - number of contigs in the assembly  
+* smallest - size of the shortest contig (bp)  
+* largest - size of the longest contig (bp)  
+* n50 - largest contig size at which at least 50% of bases are contained in contigs at least this length.
+* n_with_orf - number of contigs with a open reading frame 
 
-- Assembly Metrics comparison
-summarize
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+assembly_metrics_df <- list(no_mods = "data/no_mods/", 
+                            corrected = "data/corrected/",
+                            trimmed = "data/trimmed/", 
+                            trimmedcorrected = "data/trimmedcorrected/") %>% 
+      map(paste0, "assemblies.csv") %>%  
+      map_df(read_csv, .id = "read_set") %>% 
+      select(-assembly) %>% 
+      gather("metric","value", -read_set) %>% 
+      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+assembly_metrics_df %>% 
+      filter(metric %in% c("n_seqs", "smallest", "largest", 
+                           "n50", "n_with_orf")) %>%
+      spread(metric, value) %>% 
+      select(read_set, n_seqs, smallest, n50, largest, n_with_orf) %>% 
+      kable(digits = 2,
+            caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
+```
+
 
 Evaluation Methods
 ========================================================
 - Evaluation
       - read & reference based: TransRate
 
-Assembly Evaluation
+Evaluation - Assembly Score
 ========================================================
 
-- score distributions
+__Metrics__
 
-Reference Alignment
+* score - assembly score including all contigs  
+* optimial_score - optimized assembly score  
+* cutoff - contig score threshold used to exclude contigs from assembly  
+* weighted - assembly score weighting contig score by expression level
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+assembly_metrics_df %>% 
+      filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
+      spread(metric, value) %>% select(read_set, score, optimal_score, cutoff, weighted) %>% 
+      kable(digits = 3,
+            caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
+```
+
+
+Evaluation - Assembly Score Optimization
 ========================================================
 
-- alignment results
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
+      map_df(read_csv, .id = "read_set") %>% 
+      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
+```
+
+
+```{r fig.cap = "Relationship between the cutoff for contig score and assembly score.", echo=FALSE, warning=FALSE, mesage=FALSE}
+assembly_score_opt %>% 
+      ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
+            theme_bw() +
+            labs(x = "Contig Score Threshold", y = "Assembly Score")
+```
+
+Evaluation - Contig Metrics
+========================================================
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
+      map_df(read_csv, .id = "read_set")
+
+contig_cutoff <- assembly_metrics_df %>% filter(metric == "cutoff") %>% 
+      select(-metric) %>% rename(cutoff = value)
+contig_stat <- contig_stat %>% left_join(contig_cutoff) %>% 
+      mutate(contig_filt = cutoff < score)
+```
+
+
+__Contig Score Distribution__
+Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 then assemblies using unmodified reads or only error corrected reads.  
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+contig_stat %>% 
+      ggplot() + geom_density(aes(x = score, color = read_set, fill = read_set), 
+                              alpha = 0.25) + theme_bw()
+```
+
+
+Evaluation - Reference
+========================================================
+```{r source_ref_dir, warning=FALSE, message=FALSE, echo = FALSE}
+results_list <- list(
+      no_mods = "data/no_mods_ref/Trinity_sequences.Trinity.fixed/",
+      corrected = "data/corrected_ref/Assembly4_Corrected.Trinity.fixed/",
+      trimmed = "data/trimmed_ref/Assembly2_Trimmed.Trinity.fixed/",
+      trimmedcorrected = "data/trimmedcorrected_ref/Assembly3_TrimmedCorrected.Trinity.fixed/"
+)
+```
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+ref_contig <- results_list %>% map(paste0,"contigs.csv") %>% 
+      map_df(read_csv, .id = "read_set")
+crb_contig <- ref_contig %>% filter(has_crb == "true")
+contig_crb_score <- crb_contig %>% left_join(contig_stat)
+```
+
+__TODO__ Better way to present relationship  
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+ggplot(contig_crb_score) + 
+      geom_hex(aes(x = reference_coverage, y = score)) +
+      facet_wrap(~read_set)
+```
 
 Conclusions
 =======================================================
