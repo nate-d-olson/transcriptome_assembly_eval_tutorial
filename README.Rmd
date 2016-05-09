@@ -64,6 +64,12 @@ Relevant _C. elegans_ Reference Sequences
 
 ### Assembly results  
 Assembly metrics calculated using Transrate, see http://hibberdlab.com/transrate/metrics.html for a description of the different metrics.  
+__Metrics__
+* n_seq - number of contigs in the assembly  
+* smallest - size of the shortest contig (bp)  
+* largest - size of the longest contig (bp)  
+* n50 - largest contig size at which at least 50% of bases are contained in contigs at least this length.
+* n_with_orf - number of contigs with a open reading frame  
 
 ```{r}
 assembly_metrics_df <- list(no_mods = "data/no_mods/", 
@@ -73,10 +79,13 @@ assembly_metrics_df <- list(no_mods = "data/no_mods/",
       map(paste0, "assemblies.csv") %>%  
       map_df(read_csv, .id = "read_set") %>% 
       select(-assembly) %>% 
-      gather("metric","value", -read_set) 
+      gather("metric","value", -read_set) %>% 
+      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
 
-__TODO__ Need to workout `read_set` order
+
+
+
 ```{r}
 assembly_metrics_df %>% 
       filter(metric %in% c("n_seqs", "smallest", "largest", 
@@ -96,6 +105,7 @@ assembly_metrics_df %>%
 
 
 __Command Line__  
+Correcting transcript IDs
 
 _Read Based_
 
@@ -131,6 +141,8 @@ Read trimming and error correction resulted in the highest weighted assembly sco
 while having the lowest contig score cutoff, 
 but a lower optimal score.  
 
+Weighted assembly score - takes into consideration expression level, generous to assemblies with high proportions of low expressed poorly assembled contigs.
+
 ```{r}
 assembly_metrics_df %>% 
       filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
@@ -143,7 +155,8 @@ assembly_metrics_df %>%
 #### Assembly Score Optimization
 ```{r}
 assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
-      map_df(read_csv, .id = "read_set")
+      map_df(read_csv, .id = "read_set") %>% 
+      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
 
 Relationship between the cutoff for contig score and assembly score.
@@ -155,6 +168,23 @@ assembly_score_opt %>%
 ```
 
 ### Contigs
+see contigs.rb and read_metrics.rb for additional information about metrics
+   def score
+      return @score if @score != -1
+      prod =
+        [p_bases_covered, 0.01].max.to_f * # proportion of bases covered
+        [p_not_segmented, 0.01].max.to_f * # prob contig has 0 changepoints
+        [p_good, 0.01].max.to_f * # proportion of reads that mapped good
+        [p_seq_true, 0.01].max.to_f # scaled 1 - mean per-base edit distance
+      @score = [prod, 0.01].max
+Contig Score
+> 
+There are four components to the contig score:
+1. A measure of whether each base has been called correctly. This is estimated using the mean per-base edit distance, i.e. how many changes would have to be made to a read covering a base before the sequence of the read and the covered region of the contig agreed perfectly.
+2. A measure of whether each base is truly part of the transcript. This is estimated by determining whether any reads provide agreeing coverage for a base.
+3. The probability that the contig is derived from a single transcript (rather than pieces of two or more transcripts). This is measured as the probability that the read coverage is best modelled by a single Dirichlet distribution, rather than two or more distributions.
+4. The probability that the contig is structurally complete and correct. This is estimated as the proportion of assigned read pairs that agree with the structure and composition of the contig, which in turn is calculated by classifying the read pair alignments.
+
 ```{r}
 contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
       map_df(read_csv, .id = "read_set")
@@ -187,7 +217,7 @@ contig_stat %>%
             facet_wrap(~read_set)
 ```
 
-Proportion of bases in reads map to the transcript that agree with the transcript contig. 
+Proportion of bases in reads map to the transcript that support the transcript contig. 
 
 ```{r p_good_density, fig.cap = "Histogram of the proportion of bases in agreement with contig and contig length."}
 contig_stat %>% 
@@ -199,7 +229,8 @@ contig_stat %>%
             theme(legend.position = "bottom")
 ```
 
-Proportion of bases coverage by mapped reads.
+Proportion of bases in the contig covered, at least one read aligned to the contig coverage that position.
+
 ```{r}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_bases_covered)) +
@@ -210,16 +241,20 @@ contig_stat %>%
             theme(legend.position = "bottom")
 ```
 
+
+Mean per-base contig edit distance, average number of base pair differences between contig and reads.
 ```{r}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_seq_true)) +
             theme_bw() +
-            labs(x = "Proportion Seq Correct", 
+            labs(x = "Mean Per-Base Edit Distance", 
                  y = "Count") +
             facet_grid(contig_filt~read_set) +
             theme(legend.position = "bottom")
 ```
 
+Probability that a contig is not a chimeric misassembly, 
+where sequences from two different contigs are incorrectly assembled together.
 ```{r}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_not_segmented)) +
@@ -260,6 +295,8 @@ ref_contig <- results_list %>% map(paste0,"contigs.csv") %>%
       map_df(read_csv, .id = "read_set")
 ```
 
+__TODO__Summary table
+with assembly, p contigs with CRBB (proportion of contigs iwth CRB-Blast), p_ref crbb proprotion ref with CRBB, ref coverage - proportion of reference bases covered by CRB hits, collapse factor - high chimeras, p covX - proportion protein coverage, 
 Comprison of contigs with and with out CRB hits. Assemblies using untrimmed read set had a larger number of contigs, but little impact of the proportion of CRB hits.
 ```{r}
 ggplot(ref_contig) + geom_bar(aes(x = read_set)) + facet_wrap(~has_crb)
@@ -304,6 +341,9 @@ ggplot(contig_crb_score) +
       facet_wrap(~read_set)
 ```
 
+__TODO__
+Upper limit? correlation between reference coverage and score
+Looking at tpm 
 
 
 ## Conclusions
