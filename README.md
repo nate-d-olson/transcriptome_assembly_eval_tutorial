@@ -6,20 +6,25 @@ May 2, 2016
 
 
 ## Background 
-* Transcriptome
-      * RNAseq & transcriptomics [@Wang:2009di]
-* De novo Transcriptome assembly
-      * Trinity [@Grabherr:2011jb, @haas2013novo] 
-      * Mention other de-novo assembly algorithms  
-            * Oases (Schulz et al. 2012 - not in bib yet)  
-            * SOAPdenovo-Trans (Xie et al. 2014 - not in bib yet)  
-      * Variation in assemblies - same read data can generate very different assemblies [@smith2015transrate]  
-            * withing assembly methods: many parameters & heuristics to accommodated  
-* Transcriptome assembly evaluation
-      * Reference based
-      * Read based
-      * Transrate - contig level quality score [@smith2015transrate]
-* C. elegans transcriptome assembly and evaluation (what we did)
+
+#### Transcriptome
+* RNAseq & transcriptomics [@Wang:2009di]  
+
+#### De novo Transcriptome assembly
+* Variation in assemblies - same read data can generate very different assemblies [@smith2015transrate]  
+      * within assembly method: many parameters & heuristics (to accommodate variation in library construction, coverage depth, organisms)
+      * between assembly methods: many different appraochs to assembly problem  
+            - Oases (Schulz et al. 2012 - not in bib yet)  
+            - SOAPdenovo-Trans (Xie et al. 2014 - not in bib yet)  
+            - Trinity [@Grabherr:2011jb, @haas2013novo]
+            
+#### Transcriptome assembly evaluation  
+
+* Reference based
+* Read based
+* Transrate - contig level quality score [@smith2015transrate]
+
+#### C. elegans transcriptome assembly and evaluation (what we did)
 
 ## Assembly
 ### Source data  

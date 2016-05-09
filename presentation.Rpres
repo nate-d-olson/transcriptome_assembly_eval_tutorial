@@ -7,28 +7,62 @@ autosize: true
 Introduction
 ========================================================
 
-- Transcriptomics
-- Transcriptome Assembly
-- Transcriptome Evaluation
+### Transcriptomics
+- RNA-seq methods utilize deep-sequencing technologies to profile complete set of transcripts in a sample
+
+### *De novo* Transcriptome Assembly
+- Study transcriptomes without a reference genome
+- Variable: many different methods & variety of parameters for each method  
+      - Which are best?
+      
+Assembly Evaluation
+========================================================
+### Most are reference-based methods
+- Require reference genome or set of known sequences
+- Cannot assess correctness of novel or divergent transcripts that lack a reference
+
+### Reference-free evaluation
+- RSEM-eval (Li et al. 2014)  
+      - Assembly likelihood given read data
+      - compare different assemblies of same input data
+- TransRate (Smith-Unna et al. 2015)
 
 Tutorial Overview
 ========================================================
 - Dataset
+      - RNAseq data from *C. elegans*
+      - Raw Reads: garbage in, garbage out
+      - Read Trimming: TrimGalore
+      - Error Correction: BayesHammer(sp)
 - Assembly
-      - Read Trimming
-      - Error Correction
+      - de bruin graph-based assembly: Trinity
 - Evaluation
-
-C. elegans Dataset
+      - read & reference based: TransRate
+      
+Dataset
 ========================================================
+- Dataset
+      - RNAseq data from *C. elegans*
+      - Raw Reads: garbage in, garbage out
+      - Read Trimming: TrimGalore
+      - Error Correction: BayesHammer(sp)
 
-- Seq data
-- Trimming and Error correction
+Assembly Methods
+========================================================
+- Assembly
+      - de bruin graph-based assembly: Trinity
+      - datasets...
 
 Assembly Results
 ========================================================
 
 - Assembly Metrics comparison
+summarize
+
+Evaluation Methods
+========================================================
+- Evaluation
+      - read & reference based: TransRate
 
 Assembly Evaluation
 ========================================================
