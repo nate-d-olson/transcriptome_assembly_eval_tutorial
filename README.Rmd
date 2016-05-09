@@ -1,6 +1,6 @@
 ---
 title: "Trinity and Transrate Tutorial"
-author: "Nate Olson"
+author: "Nate Olson & Leann Biancani"
 date: "May 2, 2016"
 output:
   html_document:
@@ -29,14 +29,14 @@ results_list <- list(
 
 ## Background 
 * Transcriptome
-      * RNAseq & transcriptomics (Wang et al. 2009)
+      * RNAseq & transcriptomics [@Wang:2009di]
 * De novo Transcriptome assembly
-      * Trinity (Grabherr et al. 2011) [@haas2013novo]
-      * Mention other de-novo assembly algorithms
-            * Oases (Schulz et al. 2012)
-            * SOAPdenovo-Trans (Xie et al. 2014)
-      * Variation in assemblies - same read data can generate very different assemblies (Smith et al. 2015)
-            * withing assembly methods: many parameters & heuristics to accommodated 
+      * Trinity [@Grabherr:2011jb, @haas2013novo] 
+      * Mention other de-novo assembly algorithms  
+            * Oases (Schulz et al. 2012 - not in bib yet)  
+            * SOAPdenovo-Trans (Xie et al. 2014 - not in bib yet)  
+      * Variation in assemblies - same read data can generate very different assemblies [@smith2015transrate]  
+            * withing assembly methods: many parameters & heuristics to accommodated  
 * Transcriptome assembly evaluation
       * Reference based
       * Read based
