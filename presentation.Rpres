@@ -33,18 +33,9 @@ Introduction
 - Study transcriptomes without a reference genome
 - Variable: many different methods & variety of parameters for each method  
       - Which are best?
-      
-Assembly Evaluation
-========================================================
-### Most are reference-based methods
-- Require reference genome or set of known sequences
-- Cannot assess correctness of novel or divergent transcripts that lack a reference
 
-### Reference-free evaluation
-- RSEM-eval (Li et al. 2014)  
-      - Assembly likelihood given read data
-      - compare different assemblies of same input data
-- TransRate (Smith-Unna et al. 2015)
+### Assembly Evaluation
+- Reference vs. Read based methods
 
 Tutorial Overview
 ========================================================
@@ -104,10 +95,23 @@ assembly_metrics_df %>%
 ```
 
 
-Evaluation Methods
+Evaluation Method Transrate
 ========================================================
-- Evaluation
-      - read & reference based: TransRate
+
+__Read based method:__ align reads, score contigs four components  
+
+1. Correct base (edit distance)
+2. Correct transcript (coverage)
+3. Probability chimera
+4. Probability complete - read pairing
+
+__Reference based method:__
+
+* Align contigs to reference transcriptome - BLAST   
+* Reciprical Best Hit  
+* Evaluate reference coverage  
+
+
 
 Evaluation - Assembly Score
 ========================================================
@@ -188,7 +192,7 @@ crb_contig <- ref_contig %>% filter(has_crb == "true")
 contig_crb_score <- crb_contig %>% left_join(contig_stat)
 ```
 
-__TODO__ Better way to present relationship  
+__TODO__ Figure out better way to present relationship  
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 ggplot(contig_crb_score) + 
