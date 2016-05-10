@@ -2,9 +2,7 @@
 title: "Trinity and Transrate Tutorial"
 author: "Nate Olson & Leann Biancani"
 date: "May 2, 2016"
-output:
-  html_document:
-    keep_md: true
+output: github_document
 bibliography: tutorial.bib 
 ---
 ```{r setup, warning=FALSE, message=FALSE, echo = FALSE}
