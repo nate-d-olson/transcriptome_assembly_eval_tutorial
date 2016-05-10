@@ -120,15 +120,16 @@ Evaluation - Assembly Score
 
 __Metrics__
 
-* score - assembly score including all contigs  
-* optimial_score - optimized assembly score  
-* cutoff - contig score threshold used to exclude contigs from assembly  
-* weighted - assembly score weighting contig score by expression level
+* Score - assembly score including all contigs  
+* Optimial - optimized assembly score  
+* Cutoff - contig score threshold used to exclude contigs from assembly  
+* Weighted - assembly score weighting contig score by expression level
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df %>% 
       filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
       spread(metric, value) %>% select(read_set, score, optimal_score, cutoff, weighted) %>% 
+      rename(Dataset=read_set, Score=score, Optimal=optimal_score, Cutoff=cutoff, Weighted=weighted) %>% 
       kable(digits = 3,
             caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
 ```
@@ -144,11 +145,11 @@ assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.c
 ```
 
 
-```{r fig.cap = "Relationship between the cutoff for contig score and assembly score.", echo=FALSE, warning=FALSE, mesage=FALSE}
+```{r fig.cap = "Relationship between the cutoff for contig score and assembly score.", echo=FALSE, warning=FALSE, mesage=FALSE, fig.width = 12}
 assembly_score_opt %>% 
       ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
             theme_bw() +
-            labs(x = "Contig Score Threshold", y = "Assembly Score")
+            labs(x = "Contig Score Threshold", y = "Assembly Score", color = "Dataset")
 ```
 
 Evaluation - Contig Metrics
@@ -169,10 +170,11 @@ contig_stat <- contig_stat %>% left_join(contig_cutoff) %>%
 __Contig Score Distribution__
 Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 then assemblies using unmodified reads or only error corrected reads.  
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width = 12}
 contig_stat %>% 
       ggplot() + geom_density(aes(x = score, color = read_set, fill = read_set), 
-                              alpha = 0.25) + theme_bw()
+                              alpha = 0.25) + theme_bw() +
+            labs(x = "Contig Score", y = "Density", color = "Dataset", fill = "Dataset")
 ```
 
 
@@ -194,12 +196,12 @@ crb_contig <- ref_contig %>% filter(has_crb == "true")
 contig_crb_score <- crb_contig %>% left_join(contig_stat)
 ```
 
-__TODO__ Figure out better way to present relationship  
 
-```{r, message=FALSE, warning=FALSE, echo=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.cap = "Relationship between reference and read based quality assessment.", fig.width = 12}
 ggplot(contig_crb_score) + 
       geom_hex(aes(x = reference_coverage, y = score)) +
-      facet_wrap(~read_set)
+      facet_wrap(~read_set) +
+      theme_bw() + labs(x = "Reference Transcript Coverage", y = "Contig Score")
 ```
 
 Conclusions
