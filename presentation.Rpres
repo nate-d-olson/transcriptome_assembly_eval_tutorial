@@ -26,15 +26,17 @@ autosize: true
 Introduction
 ========================================================
 
-### Transcriptomics
-- RNA-seq methods utilize deep-sequencing technologies to profile complete set of transcripts in a sample
+__Transcriptomics__
+- Study of the complete set of RNA transcripts in a sample
+- RNA-seq methods utilize short-read sequencing technologies
+- To characterize the transcripts, reads must be assembled
 
-### *De novo* Transcriptome Assembly
+__*De novo* Transcriptome Assembly__
 - Study transcriptomes without a reference genome
 - Variable: many different methods & variety of parameters for each method  
       - Which are best?
 
-### Assembly Evaluation
+__Assembly Evaluation__
 - Reference vs. Read based methods
 
 Tutorial Overview
