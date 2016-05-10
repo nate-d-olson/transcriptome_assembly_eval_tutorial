@@ -66,11 +66,11 @@ Assembly Methods
 Assembly Results
 ========================================================
 __Metrics__
-* n_seq - number of contigs in the assembly  
-* smallest - size of the shortest contig (bp)  
-* largest - size of the longest contig (bp)  
-* n50 - largest contig size at which at least 50% of bases are contained in contigs at least this length.
-* n_with_orf - number of contigs with a open reading frame 
+* Contigs - number of contigs in the assembly  
+* Min - size of the shortest contig (bp)  
+* Max - size of the longest contig (bp)  
+* N50 - largest contig size at which at least 50% of bases are contained in contigs at least this length.
+* Contigs with ORF - number of contigs with a open reading frame 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df <- list(no_mods = "data/no_mods/", 
@@ -90,6 +90,8 @@ assembly_metrics_df %>%
                            "n50", "n_with_orf")) %>%
       spread(metric, value) %>% 
       select(read_set, n_seqs, smallest, n50, largest, n_with_orf) %>% 
+      rename(Dataset = read_set, Contigs=n_seqs, `Min (bp)`=smallest,
+              `Max (bp)`=largest, `N50 (bp)`=n50,`Contigs with ORF`=n_with_orf) %>% 
       kable(digits = 2,
             caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
 ```
