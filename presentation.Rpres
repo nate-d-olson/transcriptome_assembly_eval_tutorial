@@ -1,3 +1,11 @@
+<style>
+.reveal h1, .reveal h2, .reveal h3 {
+  word-wrap: normal;
+  -moz-hyphens: none;
+}
+
+</style>
+
 ```{r setup, warning=FALSE, message=FALSE, echo = FALSE}
 library(knitr)
 library(readr)
@@ -27,14 +35,12 @@ Introduction
 ========================================================
 
 __Transcriptomics__
-- Study of the complete set of RNA transcripts in a sample
+- Complete set of RNA transcripts in a sample
 - RNA-seq methods utilize short-read sequencing technologies
-- To characterize the transcripts, reads must be assembled
 
 __*De novo* Transcriptome Assembly__
-- Study transcriptomes without a reference genome
-- Variable: many different methods & variety of parameters for each method  
-      - Which are best?
+- Constructing a transcriptome from RNA-seq data
+- Many different methods & arameters for each method 
 
 __Assembly Evaluation__
 - Reference vs. Read based methods
@@ -43,11 +49,10 @@ Tutorial Overview
 ========================================================
 - Dataset
       - RNAseq data from *C. elegans*
-      - Raw Reads: garbage in, garbage out
       - Read Trimming: TrimGalore
-      - Error Correction: BayesHammer(sp)
+      - Error Correction: BayesHammer
 - Assembly
-      - de bruin graph-based assembly: Trinity
+      - de Bruijn graph-based assembly: Trinity
 - Evaluation
       - read & reference based: TransRate
       
@@ -79,28 +84,18 @@ assembly_metrics_df <- list(no_mods = "data/no_mods/",
       mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
 
-__Assembly Summary__
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df %>% 
       filter(metric %in% c("n_seqs", "smallest", "largest", 
                            "n50", "n_with_orf")) %>%
       spread(metric, value) %>% 
       select(read_set, n_seqs, smallest, largest, n50, n_with_orf) %>% 
-      rename(Dataset = read_set, Contigs=n_seqs, Min=smallest,
-              Max=largest, N50=n50,`N ORF`=n_with_orf) %>% 
+      rename(Dataset = read_set, `# of Contigs`=n_seqs, `Shortest Contig (bp)`=smallest,
+              `Longest Contig (bp)`=largest, `N50 (bp)`=n50, `# Contigs with ORF`=n_with_orf) %>% 
       kable(digits = 2,
             caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
 ```
-
-***
-__Metrics__
-* Contigs - number of contigs in the assembly  
-* Min & Max - size of the shortest and longest contig (bp)  
-* N50 - size of largest contig where > 50% of bases are in contigs > this length.
-* N ORF - number of contigs with a open reading frame 
-
-
-
+N50 - largest contig (bp) where > 50% of bases in contigs > this length.
 
 Evaluation Method Transrate
 ========================================================
@@ -108,15 +103,15 @@ Evaluation Method Transrate
 __Read based method:__ 
 * Map read and calculate score
 * Contig Score 
-      1. Correct base (edit distance)
-      2. Correct transcript (coverage)
-      3. Probability chimera
-      4. Probability complete - read pairing
+      1. Edit distance
+      2. Coverage
+      3. Chimera
+      4. Complete
 
 ****
 __Reference based method:__
 
-* Align contigs to reference transcriptome - BLAST   
+* Align contigs to reference   
 * Reciprical Best Hit  
 * Evaluate reference coverage  
 
@@ -124,24 +119,16 @@ __Reference based method:__
 
 Evaluation - Assembly Score
 ========================================================
-
+left: 60%
 __Transrate Score Summary__
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df %>% 
       filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
       spread(metric, value) %>% select(read_set, score, optimal_score, cutoff, weighted) %>% 
-      rename(Dataset=read_set, Score=score, Optimal=optimal_score, Cutoff=cutoff, Weighted=weighted) %>% 
+      rename(Dataset=read_set, `Assembly Score`=score, `Optimized Score`=optimal_score, `Contig Score Threshold`=cutoff, `Weighted Score`=weighted) %>% 
       kable(digits = 3,
             caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
 ```
-****
-
-__Metrics__
-
-* Score - assembly score including all contigs  
-* Optimial - optimized assembly score  
-* Cutoff - contig score threshold for optimal score  
-* Weighted - assembly score weighted by expression level
 
 
 
@@ -161,8 +148,7 @@ assembly_score_opt %>%
             labs(x = "Contig Score Threshold", y = "Assembly Score", color = "Dataset")
 ```
 
-For all datases the assembly score increases with increasing contig score threshold, 
-then drops sharply due to filtering large proportion of contigs.  
+Threshold for optimal assembly score varies by dataset.  
 
 
 Evaluation - Contig Metrics
@@ -186,7 +172,7 @@ contig_stat %>%
             labs(x = "Contig Score", y = "Density", color = "Dataset", fill = "Dataset")
 ```
 
-Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 compared to assemblies using unmodified reads or only error corrected reads.  
+Trimming resulted in more contigs with scores > 0.25.
 
 Evaluation - Reference
 ========================================================
@@ -215,7 +201,7 @@ ggplot(contig_crb_score) +
       theme_bw() + labs(x = "Reference Transcript Coverage", y = "Contig Score")
 ```
 
-Contig score is a poor predictor of reference transcript coverage.  
+Contig score is unrealated to reference transcript coverage.  
 
 Conclusions
 =======================================================
