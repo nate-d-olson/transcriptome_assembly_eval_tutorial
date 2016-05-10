@@ -1,11 +1,3 @@
-<style>
-.reveal h1, .reveal h2, .reveal h3 {
-  word-wrap: normal;
-  -moz-hyphens: none;
-}
-
-</style>
-
 ```{r setup, warning=FALSE, message=FALSE, echo = FALSE}
 library(knitr)
 library(readr)
@@ -25,7 +17,7 @@ results_read <- list(
 )
 ```
 
-Transcriptome Assembly and Evaluation Tutorial
+Transcriptome Assembly and Evaluation
 ========================================================
 author: Nate Olson and Leann Biancani
 date: 5/11/2016
