@@ -9,7 +9,7 @@ library(ggplot2)
 ```
 
 ```{r source_dir, warning=FALSE, message=FALSE, echo = FALSE}
-results_list <- list(
+results_read <- list(
       no_mods = "data/no_mods/Trinity_sequences.Trinity.fixed/",
       corrected = "data/corrected/Assembly4_Corrected.Trinity.fixed/",
       trimmed = "data/trimmed/Assembly2_Trimmed.Trinity.fixed/",
@@ -65,13 +65,6 @@ Assembly Methods
 
 Assembly Results
 ========================================================
-__Metrics__
-* Contigs - number of contigs in the assembly  
-* Min - size of the shortest contig (bp)  
-* Max - size of the longest contig (bp)  
-* N50 - largest contig size at which at least 50% of bases are contained in contigs at least this length.
-* Contigs with ORF - number of contigs with a open reading frame 
-
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df <- list(no_mods = "data/no_mods/", 
                             corrected = "data/corrected/",
@@ -84,29 +77,41 @@ assembly_metrics_df <- list(no_mods = "data/no_mods/",
       mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
 
+__Assembly Summary__
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df %>% 
       filter(metric %in% c("n_seqs", "smallest", "largest", 
                            "n50", "n_with_orf")) %>%
       spread(metric, value) %>% 
-      select(read_set, n_seqs, smallest, n50, largest, n_with_orf) %>% 
-      rename(Dataset = read_set, Contigs=n_seqs, `Min (bp)`=smallest,
-              `Max (bp)`=largest, `N50 (bp)`=n50,`Contigs with ORF`=n_with_orf) %>% 
+      select(read_set, n_seqs, smallest, largest, n50, n_with_orf) %>% 
+      rename(Dataset = read_set, Contigs=n_seqs, Min=smallest,
+              Max=largest, N50=n50,`N ORF`=n_with_orf) %>% 
       kable(digits = 2,
             caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
 ```
+
+***
+__Metrics__
+* Contigs - number of contigs in the assembly  
+* Min & Max - size of the shortest and longest contig (bp)  
+* N50 - size of largest contig where > 50% of bases are in contigs > this length.
+* N ORF - number of contigs with a open reading frame 
+
+
 
 
 Evaluation Method Transrate
 ========================================================
 
-__Read based method:__ align reads, score contigs four components  
+__Read based method:__ 
+* Map read and calculate score
+* Contig Score 
+      1. Correct base (edit distance)
+      2. Correct transcript (coverage)
+      3. Probability chimera
+      4. Probability complete - read pairing
 
-1. Correct base (edit distance)
-2. Correct transcript (coverage)
-3. Probability chimera
-4. Probability complete - read pairing
-
+****
 __Reference based method:__
 
 * Align contigs to reference transcriptome - BLAST   
@@ -118,13 +123,7 @@ __Reference based method:__
 Evaluation - Assembly Score
 ========================================================
 
-__Metrics__
-
-* Score - assembly score including all contigs  
-* Optimial - optimized assembly score  
-* Cutoff - contig score threshold used to exclude contigs from assembly  
-* Weighted - assembly score weighting contig score by expression level
-
+__Transrate Score Summary__
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_metrics_df %>% 
       filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
@@ -133,13 +132,21 @@ assembly_metrics_df %>%
       kable(digits = 3,
             caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
 ```
+****
+
+__Metrics__
+
+* Score - assembly score including all contigs  
+* Optimial - optimized assembly score  
+* Cutoff - contig score threshold for optimal score  
+* Weighted - assembly score weighted by expression level
+
 
 
 Evaluation - Assembly Score Optimization
 ========================================================
-
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
-assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
+assembly_score_opt <- results_read %>% map(paste0,"assembly_score_optimisation.csv") %>% 
       map_df(read_csv, .id = "read_set") %>% 
       mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
@@ -152,12 +159,16 @@ assembly_score_opt %>%
             labs(x = "Contig Score Threshold", y = "Assembly Score", color = "Dataset")
 ```
 
+For all datases the assembly score increases with increasing contig score threshold, 
+then drops sharply due to filtering large proportion of contigs.  
+
+
 Evaluation - Contig Metrics
 ========================================================
 
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
-contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
+contig_stat <- results_read %>% map(paste0,"contigs.csv") %>% 
       map_df(read_csv, .id = "read_set")
 
 contig_cutoff <- assembly_metrics_df %>% filter(metric == "cutoff") %>% 
@@ -166,22 +177,19 @@ contig_stat <- contig_stat %>% left_join(contig_cutoff) %>%
       mutate(contig_filt = cutoff < score)
 ```
 
-
-__Contig Score Distribution__
-Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 then assemblies using unmodified reads or only error corrected reads.  
-
-```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width = 12}
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Contig score distribution by dataset.", fig.width = 12}
 contig_stat %>% 
       ggplot() + geom_density(aes(x = score, color = read_set, fill = read_set), 
                               alpha = 0.25) + theme_bw() +
             labs(x = "Contig Score", y = "Density", color = "Dataset", fill = "Dataset")
 ```
 
+Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 compared to assemblies using unmodified reads or only error corrected reads.  
 
 Evaluation - Reference
 ========================================================
 ```{r source_ref_dir, warning=FALSE, message=FALSE, echo = FALSE}
-results_list <- list(
+results_ref <- list(
       no_mods = "data/no_mods_ref/Trinity_sequences.Trinity.fixed/",
       corrected = "data/corrected_ref/Assembly4_Corrected.Trinity.fixed/",
       trimmed = "data/trimmed_ref/Assembly2_Trimmed.Trinity.fixed/",
@@ -190,7 +198,7 @@ results_list <- list(
 ```
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
-ref_contig <- results_list %>% map(paste0,"contigs.csv") %>% 
+ref_contig <- results_ref %>% map(paste0,"contigs.csv") %>% 
       map_df(read_csv, .id = "read_set")
 crb_contig <- ref_contig %>% filter(has_crb == "true")
 contig_crb_score <- crb_contig %>% left_join(contig_stat)
@@ -199,12 +207,16 @@ contig_crb_score <- crb_contig %>% left_join(contig_stat)
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.cap = "Relationship between reference and read based quality assessment.", fig.width = 12}
 ggplot(contig_crb_score) + 
-      geom_hex(aes(x = reference_coverage, y = score)) +
-      facet_wrap(~read_set) +
+      geom_density2d(aes(x = reference_coverage, y = score), color = "darkblue") +
+      geom_smooth(aes(x = reference_coverage, y = score), color = "darkorange") +
+      facet_grid(contig_filt~read_set) +
       theme_bw() + labs(x = "Reference Transcript Coverage", y = "Contig Score")
 ```
 
+Contig score is a poor predictor of reference transcript coverage.  
+
 Conclusions
 =======================================================
-- Trinity 
-- Impact of trimmed and error correction
+- Read trimming has a greater impact on assembly size and number of contigs than error correction.  
+- Read based assembly evaluation - potentially biased by the use of un-modified reads  
+- No clear relationship between contig score and reference coverage
