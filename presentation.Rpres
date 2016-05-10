@@ -49,11 +49,7 @@ Tutorial Overview
 ========================================================
 __Dataset__
 - Raw RNAseq reads from *C. elegans*
-<<<<<<< HEAD
 - Read Trimming: Trim Galore 4.0
-=======
-- Read Trimming: TrimGalore 4.0
->>>>>>> f98c6c66f2a3a69f56c9928e9aaeca0e7d32d0a2
 - Error Correction: BayesHammer (SPAdes 3.5)
 
 __Assembly__
@@ -72,19 +68,10 @@ __No Modifications__
 - garbage in, garbage out?
 
 __Trimmed Reads__
-<<<<<<< HEAD
 - Read Trimming with Trim Galore 4.0
 
 __Corrected Reads__
 - Error Correction with BayesHammer (SPAdes 3.5)
-=======
-- Read Trimming with TrimGalore 4.0
-- 
-
-__Corrected Reads__
-- Error Correction with BayesHammer (SPAdes 3.5)
-- 
->>>>>>> f98c6c66f2a3a69f56c9928e9aaeca0e7d32d0a2
 
 __Trimmed & Corrected Reads__
 - TrimGalore & BayesHammer
