@@ -41,23 +41,33 @@ __Assembly Evaluation__
 
 Tutorial Overview
 ========================================================
-- Dataset
-      - RNAseq data from *C. elegans*
-      - Raw Reads: garbage in, garbage out
-      - Read Trimming: TrimGalore
-      - Error Correction: BayesHammer(sp)
-- Assembly
-      - de bruin graph-based assembly: Trinity
-- Evaluation
-      - read & reference based: TransRate
+__Dataset__
+- Raw RNAseq reads from *C. elegans*
+- Read Trimming: Trim Galore 4.0
+- Error Correction: BayesHammer (SPAdes 3.5)
+
+__Assembly__
+- *De novo* Assembly: Trinity 2.0.6
+
+__Evaluation__
+- read & reference based: TransRate
       
 Dataset
 ========================================================
-- Dataset
-      - RNAseq data from *C. elegans*
-      - Raw Reads: garbage in, garbage out
-      - Read Trimming: TrimGalore
-      - Error Correction: BayesHammer(sp)
+Data used to generate assemblies
+
+__No Modifications__
+- Raw RNAseq reads from *C. elegans*
+- garbage in, garbage out?
+
+__Trimmed Reads__
+- Read Trimming with Trim Galore 4.0
+
+__Corrected Reads__
+- Error Correction with BayesHammer (SPAdes 3.5)
+
+__Trimmed & Corrected Reads__
+- TrimGalore & BayesHammer
 
 Assembly Methods
 ========================================================
