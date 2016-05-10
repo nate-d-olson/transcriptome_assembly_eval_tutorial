@@ -61,11 +61,9 @@ __Evaluation__
       
 Dataset
 ========================================================
-Data used to generate assemblies
 
 __No Modifications__
 - Raw RNAseq reads from *C. elegans*
-- garbage in, garbage out?
 
 __Trimmed Reads__
 - Read Trimming with Trim Galore 4.0
