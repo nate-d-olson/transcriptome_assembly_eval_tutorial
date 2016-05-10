@@ -74,11 +74,11 @@ __Corrected Reads__
 __Trimmed & Corrected Reads__
 - TrimGalore & BayesHammer
 
-Assembly Methods
+Assembly Method
 ========================================================
-- Assembly
-      - de bruin graph-based assembly: Trinity
-      - datasets...
+__Trinity 2.0.6__
+- *de novo* assembly of RNAseq reads
+- de Bruijn graph based assembly algorithm
 
 Assembly Results
 ========================================================
