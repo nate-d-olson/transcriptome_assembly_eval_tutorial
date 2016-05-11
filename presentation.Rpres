@@ -97,7 +97,7 @@ assembly_metrics_df %>%
       kable(digits = 2,
             caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
 ```
-N50 - largest contig (bp) where > 50% of bases in contigs > this length.
+N50 = length (bp) of contig where > 50% of assembled bases are in contigs at least as long
 
 Evaluation Method Transrate
 ========================================================
