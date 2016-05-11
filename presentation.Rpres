@@ -71,6 +71,7 @@ Assembly Method
 __Trinity 2.0.6__
 - *de novo* assembly of RNAseq reads
 - de Bruijn graph based assembly algorithm
+- designed specifically for transcriptome assembly
 
 Assembly Results
 ========================================================
