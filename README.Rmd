@@ -30,6 +30,8 @@ results_list <- list(
 #### Transcriptome
 * RNAseq & transcriptomics [@Wang:2009di]  
 
+Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Most RNA sequencing (RNAseq) methods use short-read sequencing technologies. In order to characterize transcripts, these reads mush be assembled.  *De novo* transcriptome assembly builds contigs from RNAseq data without the use of a reference genome. These assembles, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method. As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly. Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNAseq reads back to the assembly.
+
 #### De novo Transcriptome assembly
 * Variation in assemblies - same read data can generate very different assemblies [@smith2015transrate]  
       * within assembly method: many parameters & heuristics (to accommodate variation in library construction, coverage depth, organisms)
