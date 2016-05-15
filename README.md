@@ -25,6 +25,8 @@ Transcriptomics is the study of the complete set of RNA transcripts in a given s
 
       Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
 
+      Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
+
 -   Reference based
 -   Read based
 -   Transrate - contig level quality score (Smith-Unna et al. 2015)
