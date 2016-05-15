@@ -8,11 +8,11 @@ Background
 
 #### Transcriptomics
 
--   RNAseq & transcriptomics (Wang, Gerstein, and Snyder 2009)
-
-Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Various aims of transcriptomic studies include cataloging all species of transcripts (mRNA, non-coding RNAs, smRNAs), determining gene structure, studying splicing patterns, identifying post-transcriptional modifications, or investigating changes in expression patterns (Wang, Gerstein, and Snyder 2009). Most RNA sequencing (RNA-seq) methods utilize short-read sequencing technologies to sequence a library of cDNA fragments generated from an isolation of RNA molecules. In order to characterize transcripts, these short reads sequences mush be assembled into contiguous sequences (contigs). In order to assemble a transcriptome, reads may either be aligned to a known reference genome or transcriptome sequence, or assembled *de novo*. *De novo* transcriptome assembly algorithms build contigs from RNA-seq data without the use of a reference genome. These assemblies, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method resulting in the ability to generate multiple assemblies from a single set of reads. As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly. Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
+Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Various aims of transcriptomic studies include cataloging all species of transcripts (mRNA, non-coding RNAs, smRNAs), determining gene structure, studying splicing patterns, identifying post-transcriptional modifications, or investigating changes in expression patterns (Wang, Gerstein, and Snyder 2009). Most RNA sequencing (RNA-seq) methods utilize short-read sequencing technologies to sequence a library of cDNA fragments generated from an isolation of RNA molecules. In order to characterize transcripts, these short reads sequences mush be assembled into contiguous sequences (contigs). In order to assemble a transcriptome, reads may either be aligned to a known reference genome or transcriptome sequence, or assembled *de novo*.
 
 #### De novo Transcriptome assembly
+
+*De novo* transcriptome assembly algorithms build contigs from RNA-seq data without the use of a reference genome. These assemblies, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method, resulting in the ability to generate multiple assemblies from a single set of reads (Smith-Unna et al. 2015). As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly.
 
 -   Variation in assemblies - same read data can generate very different assemblies (Smith-Unna et al. 2015)
     -   within assembly method: many parameters & heuristics (to accommodate variation in library construction, coverage depth, organisms)
@@ -22,6 +22,8 @@ Transcriptomics is the study of the complete set of RNA transcripts in a given s
         - Trinity (M. G. Grabherr et al. 2011, Haas et al. (2013))
 
 #### Transcriptome assembly evaluation
+
+      Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
 
 -   Reference based
 -   Read based
