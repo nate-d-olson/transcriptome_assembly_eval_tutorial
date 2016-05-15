@@ -8,33 +8,22 @@ Background
 
 #### Transcriptomics
 
-Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Various aims of transcriptomic studies include cataloging all species of transcripts (mRNA, non-coding RNAs, smRNAs), determining gene structure, studying splicing patterns, identifying post-transcriptional modifications, or investigating changes in expression patterns (Wang, Gerstein, and Snyder 2009). Most RNA sequencing (RNA-seq) methods utilize short-read sequencing technologies to sequence a library of cDNA fragments generated from an isolation of RNA molecules. In order to characterize transcripts, these short reads sequences mush be assembled into contiguous sequences (contigs). In order to assemble a transcriptome, reads may either be aligned to a known reference genome or transcriptome sequence, or assembled *de novo*.
+Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Various aims of transcriptomic studies include cataloging all species of transcripts (mRNA, non-coding RNAs, smRNAs), determining gene structure, studying splicing patterns, identifying post-transcriptional modifications, or investigating changes in expression patterns (Wang, Gerstein, and Snyder 2009). Most RNA sequencing (RNA-seq) methods utilize short-read sequencing technologies to sequence a library of cDNA fragments generated from an isolation of RNA molecules. In order to characterize transcripts, these short reads sequences must be assembled into contiguous sequences (contigs). To assemble a transcriptome, reads may either be aligned to a known reference genome or transcriptome sequence, or assembled *de novo*.
 
 #### De novo Transcriptome assembly
 
 *De novo* transcriptome assembly algorithms build contigs from RNA-seq data without the use of a reference genome. These assemblies, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method, resulting in the ability to generate multiple assemblies from a single set of reads (Smith-Unna et al. 2015). As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly.
 
--   Variation in assemblies - same read data can generate very different assemblies (Smith-Unna et al. 2015)
-    -   within assembly method: many parameters & heuristics (to accommodate variation in library construction, coverage depth, organisms)
-    -   between assembly methods: many different approaches to assembly problem
-        - Oases (Schulz et al. 2012 - not in bib yet)
-        - SOAPdenovo-Trans (Xie et al. 2014 - not in bib yet)
-        - Trinity (M. G. Grabherr et al. 2011, Haas et al. (2013))
+Trinity (M. G. Grabherr et al. 2011, Haas et al. (2013))
 
 #### Transcriptome assembly evaluation
 
 Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
 
--   Reference based
--   Read based
--   Transrate - contig level quality score (Smith-Unna et al. 2015)
+C. elegans Transcriptome Assembly and Evaluation
+------------------------------------------------
 
-#### C. elegans transcriptome assembly and evaluation (what we did)
-
-Assembly
---------
-
-### Source data
+#### Source data
 
 Sequence data identified by searching SRA for *C. elegans* and limiting results to RNA, identified a study for an Illumina HiSeq 2000, 94 bp paired end run. Accession SRR2969230 was used to generate and evaluate the assembly.
 
@@ -45,6 +34,12 @@ Relevant *C. elegans* Reference Sequences
 -   Transcriptome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/gtf/caenorhabditis_elegans/Caenorhabditis_elegans.WBcel235.31.gtf.gz>
 -   Genome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/dna/Caenorhabditis_elegans.WBcel235.31.dna.chromosome.*.fa.gz>
 -   Proteome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/pep/Caenorhabditis_elegans.WBcel235.31.pep.all.fa.gz>
+
+#### Read Trimming
+
+#### Error Correction
+
+#### Assembly
 
 ### How to run trinity
 
@@ -68,7 +63,7 @@ N50 is the length (bp) of contig where &gt; 50% of assembled bases are in contig
 Assembly evaluation
 -------------------
 
-### Running transrate
+### Running TransRate
 
 #### Installation
 
@@ -139,7 +134,7 @@ contig_stat %>%
                               alpha = 0.25) + theme_bw()
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)<!-- -->
 
 ##### Assembly Score
 
@@ -160,7 +155,7 @@ assembly_score_opt %>%
 
     ## Warning: Removed 2 rows containing missing values (geom_path).
 
-![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)<!-- -->
 
 ###### Assembly Score Summary
 
@@ -195,7 +190,7 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)<!-- -->
 
 ###### Coverage
 
@@ -213,7 +208,7 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)<!-- -->
 
 ###### Chimera
 
@@ -231,7 +226,7 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)<!-- -->
 
 ###### Complete
 
@@ -249,19 +244,25 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![Histogram of the proportion of bases in agreement with contig and contig length.](README_files/figure-markdown_github/p_good_density-1.png)
+<img src="README_files/figure-markdown_github/p_good_density-1.png" alt="Histogram of the proportion of bases in agreement with contig and contig length."  />
+<p class="caption">
+Histogram of the proportion of bases in agreement with contig and contig length.
+</p>
 
 #### Reference Based Evaluation
 
 Contigs were evaluated based on the reference coverage for contigs with CRB hits. Reference coverage was calculated as the proportion of the reference transcript covered by the contig.
 
-Relationship between reference coverage and contig length. ![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
+Relationship between reference coverage and contig length. ![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)<!-- -->
 
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)<!-- -->
 
 #### Read and Reference Evaluation Comparison
 
-![Relationship between reference and read based quality assessment.](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
+<img src="README_files/figure-markdown_github/unnamed-chunk-14-1.png" alt="Relationship between reference and read based quality assessment."  />
+<p class="caption">
+Relationship between reference and read based quality assessment.
+</p>
 
 Contig score is unrealated to reference transcript coverage.
 
@@ -283,7 +284,7 @@ print(s_info$platform)
 ```
 
     ##  setting  value                       
-    ##  version  R version 3.2.4 (2016-03-10)
+    ##  version  R version 3.2.3 (2015-12-10)
     ##  system   x86_64, darwin13.4.0        
     ##  ui       X11                         
     ##  language (EN)                        
@@ -295,47 +296,46 @@ print(s_info$platform)
 kable(s_info$packages)
 ```
 
-| package    | \*  | version    | date       | source                            |
-|:-----------|:----|:-----------|:-----------|:----------------------------------|
-| assertthat |     | 0.1        | 2013-12-06 | CRAN (R 3.2.0)                    |
-| colorspace |     | 1.2-6      | 2015-03-11 | CRAN (R 3.2.0)                    |
-| DBI        |     | 0.4-1      | 2016-05-08 | CRAN (R 3.2.5)                    |
-| devtools   |     | 1.11.1     | 2016-04-21 | CRAN (R 3.2.5)                    |
-| digest     |     | 0.6.9      | 2016-01-08 | CRAN (R 3.2.3)                    |
-| dplyr      | \*  | 0.4.3.9000 | 2016-02-11 | Github (<hadley/dplyr@9bae2aa>)   |
-| evaluate   |     | 0.9        | 2016-04-29 | CRAN (R 3.2.5)                    |
-| formatR    |     | 1.4        | 2016-05-09 | CRAN (R 3.2.4)                    |
-| GGally     | \*  | 1.0.1      | 2016-01-14 | CRAN (R 3.2.3)                    |
-| ggplot2    | \*  | 2.1.0      | 2016-03-01 | CRAN (R 3.2.4)                    |
-| gtable     |     | 0.2.0      | 2016-02-26 | CRAN (R 3.2.3)                    |
-| hexbin     | \*  | 1.27.1     | 2015-08-19 | CRAN (R 3.2.0)                    |
-| highr      |     | 0.6        | 2016-05-09 | CRAN (R 3.2.4)                    |
-| htmltools  |     | 0.3.5      | 2016-03-21 | CRAN (R 3.2.4)                    |
-| knitr      | \*  | 1.13       | 2016-05-09 | CRAN (R 3.2.4)                    |
-| labeling   |     | 0.3        | 2014-08-23 | CRAN (R 3.2.0)                    |
-| lattice    |     | 0.20-33    | 2015-07-14 | CRAN (R 3.2.4)                    |
-| lazyeval   |     | 0.1.10     | 2015-01-02 | CRAN (R 3.2.0)                    |
-| magrittr   |     | 1.5        | 2014-11-22 | CRAN (R 3.2.0)                    |
-| MASS       |     | 7.3-45     | 2015-11-10 | CRAN (R 3.2.2)                    |
-| Matrix     |     | 1.2-6      | 2016-05-02 | CRAN (R 3.2.5)                    |
-| memoise    |     | 1.0.0      | 2016-01-29 | CRAN (R 3.2.3)                    |
-| mgcv       |     | 1.8-12     | 2016-03-03 | CRAN (R 3.2.4)                    |
-| munsell    |     | 0.4.3      | 2016-02-13 | CRAN (R 3.2.3)                    |
-| nlme       |     | 3.1-128    | 2016-05-10 | CRAN (R 3.2.5)                    |
-| plyr       |     | 1.8.3      | 2015-06-12 | CRAN (R 3.2.0)                    |
-| purrr      | \*  | 0.2.1      | 2016-02-13 | CRAN (R 3.2.3)                    |
-| R6         |     | 2.1.2      | 2016-01-26 | CRAN (R 3.2.3)                    |
-| Rcpp       |     | 0.12.4     | 2016-03-26 | CRAN (R 3.2.4)                    |
-| readr      | \*  | 0.2.2      | 2015-10-22 | CRAN (R 3.2.0)                    |
-| reshape    |     | 0.8.5      | 2014-04-23 | CRAN (R 3.2.0)                    |
-| reshape2   |     | 1.4.1      | 2014-12-06 | CRAN (R 3.2.0)                    |
-| rmarkdown  |     | 0.9.6      | 2016-05-01 | CRAN (R 3.2.5)                    |
-| scales     |     | 0.4.0      | 2016-02-26 | CRAN (R 3.2.3)                    |
-| stringi    |     | 1.0-1      | 2015-10-22 | CRAN (R 3.2.1)                    |
-| stringr    | \*  | 1.0.0.9000 | 2015-11-23 | Github (<hadley/stringr@a67f8f0>) |
-| tidyr      | \*  | 0.4.1      | 2016-02-05 | CRAN (R 3.2.3)                    |
-| withr      |     | 1.0.1      | 2016-02-04 | CRAN (R 3.2.3)                    |
-| yaml       |     | 2.1.13     | 2014-06-12 | CRAN (R 3.2.0)                    |
+| package    | \*  | version | date       | source                               |
+|:-----------|:----|:--------|:-----------|:-------------------------------------|
+| assertthat |     | 0.1     | 2013-12-06 | CRAN (R 3.2.0)                       |
+| colorspace |     | 1.2-6   | 2015-03-11 | CRAN (R 3.2.0)                       |
+| DBI        |     | 0.3.1   | 2014-09-24 | CRAN (R 3.2.0)                       |
+| devtools   |     | 1.9.1   | 2015-09-11 | CRAN (R 3.2.0)                       |
+| digest     |     | 0.6.9   | 2016-01-08 | CRAN (R 3.2.3)                       |
+| dplyr      | \*  | 0.4.3   | 2015-09-01 | CRAN (R 3.2.0)                       |
+| evaluate   |     | 0.8     | 2015-09-18 | CRAN (R 3.2.0)                       |
+| formatR    |     | 1.2.1   | 2015-09-18 | CRAN (R 3.2.0)                       |
+| GGally     | \*  | 1.0.1   | 2016-01-14 | CRAN (R 3.2.3)                       |
+| ggplot2    | \*  | 2.1.0   | 2016-03-01 | CRAN (R 3.2.4)                       |
+| gtable     |     | 0.1.2   | 2012-12-05 | CRAN (R 3.2.0)                       |
+| hexbin     | \*  | 1.27.1  | 2015-08-19 | CRAN (R 3.2.0)                       |
+| highr      |     | 0.5.1   | 2015-09-18 | CRAN (R 3.2.0)                       |
+| htmltools  |     | 0.3     | 2015-12-29 | CRAN (R 3.2.3)                       |
+| knitr      | \*  | 1.12.3  | 2016-01-22 | CRAN (R 3.2.3)                       |
+| labeling   |     | 0.3     | 2014-08-23 | CRAN (R 3.2.0)                       |
+| lattice    |     | 0.20-33 | 2015-07-14 | CRAN (R 3.2.3)                       |
+| lazyeval   |     | 0.1.10  | 2015-01-02 | CRAN (R 3.2.0)                       |
+| magrittr   |     | 1.5     | 2014-11-22 | CRAN (R 3.2.0)                       |
+| MASS       |     | 7.3-45  | 2015-11-10 | CRAN (R 3.2.3)                       |
+| Matrix     |     | 1.2-3   | 2015-11-28 | CRAN (R 3.2.3)                       |
+| memoise    |     | 0.2.1   | 2014-04-22 | CRAN (R 3.2.0)                       |
+| mgcv       |     | 1.8-9   | 2015-10-30 | CRAN (R 3.2.3)                       |
+| munsell    |     | 0.4.2   | 2013-07-11 | CRAN (R 3.2.0)                       |
+| nlme       |     | 3.1-122 | 2015-08-19 | CRAN (R 3.2.3)                       |
+| plyr       |     | 1.8.3   | 2015-06-12 | CRAN (R 3.2.0)                       |
+| purrr      | \*  | 0.2.1   | 2016-02-13 | CRAN (R 3.2.3)                       |
+| R6         |     | 2.1.1   | 2015-08-19 | CRAN (R 3.2.0)                       |
+| Rcpp       |     | 0.12.2  | 2015-11-15 | CRAN (R 3.2.2)                       |
+| readr      | \*  | 0.2.2   | 2015-10-22 | CRAN (R 3.2.0)                       |
+| reshape    |     | 0.8.5   | 2014-04-23 | CRAN (R 3.2.0)                       |
+| reshape2   |     | 1.4.1   | 2014-12-06 | CRAN (R 3.2.0)                       |
+| rmarkdown  |     | 0.9.5   | 2016-01-25 | Github (<rstudio/rmarkdown@e7a1e6b>) |
+| scales     |     | 0.3.0   | 2015-08-25 | CRAN (R 3.2.0)                       |
+| stringi    |     | 1.0-1   | 2015-10-22 | CRAN (R 3.2.0)                       |
+| stringr    | \*  | 1.0.0   | 2015-04-30 | CRAN (R 3.2.0)                       |
+| tidyr      | \*  | 0.4.1   | 2016-02-05 | CRAN (R 3.2.3)                       |
+| yaml       |     | 2.1.13  | 2014-06-12 | CRAN (R 3.2.0)                       |
 
 References
 ----------
