@@ -253,29 +253,15 @@ contig_stat %>%
 
 #### Reference Based Evaluation
 
-Exploring contigs with CRB hits.
+Contigs were evaluated based on the reference coverage for contigs with CRB hits. Reference coverage was calculated as the proportion of the reference transcript covered by the contig.
 
-``` r
-crb_contig <- ref_contig %>% filter(has_crb == "true")
-```
-
-``` r
-ggplot(crb_contig) + geom_hex(aes(x = length, y = reference_coverage)) + 
-      facet_wrap(~read_set)
-```
+Relationship between reference coverage and contig length. ![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
-``` r
-ggplot(crb_contig) + geom_hex(aes(x = orf_length, y = reference_coverage)) +
-      facet_wrap(~read_set)
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
-
 #### Read and Reference Evaluation Comparison
 
-![Relationship between reference and read based quality assessment.](README_files/figure-markdown_github/unnamed-chunk-15-1.png)
+![Relationship between reference and read based quality assessment.](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 Contig score is unrealated to reference transcript coverage.
 

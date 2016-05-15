@@ -258,6 +258,8 @@ contig_stat %>%
 
 
 #### Reference Based Evaluation
+Contigs were evaluated based on the reference coverage for contigs with CRB hits. 
+Reference coverage was calculated as the proportion of the reference transcript covered by the contig.  
 
 ```{r source_ref_dir, warning=FALSE, message=FALSE, echo = FALSE}
 results_ref <- list(
@@ -275,19 +277,15 @@ crb_contig <- ref_contig %>% filter(has_crb == "true")
 contig_crb_score <- crb_contig %>% left_join(contig_stat)
 ```
 
-Exploring contigs with CRB hits.  
-```{r}
-crb_contig <- ref_contig %>% filter(has_crb == "true")
-```
-
-```{r}
+Relationship between reference coverage and contig length.
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 ggplot(crb_contig) + geom_hex(aes(x = length, y = reference_coverage)) + 
-      facet_wrap(~read_set)
+      facet_wrap(~read_set) + theme_bw() + labs(x = "Contig Length", y = "Reference Coverage")
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 ggplot(crb_contig) + geom_hex(aes(x = orf_length, y = reference_coverage)) +
-      facet_wrap(~read_set)
+      facet_wrap(~read_set) + theme_bw() + labs(x = "Contig ORF Length", y = "Reference Coverage")
 ```
 
 
