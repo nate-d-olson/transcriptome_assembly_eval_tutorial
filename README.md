@@ -10,6 +10,8 @@ Background
 
 -   RNAseq & transcriptomics (Wang, Gerstein, and Snyder 2009)
 
+Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Most RNA sequencing (RNAseq) methods use short-read sequencing technologies. In order to characterize transcripts, these reads mush be assembled. *De novo* transcriptome assembly builds contigs from RNAseq data without the use of a reference genome. These assembles, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method. As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly. Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNAseq reads back to the assembly.
+
 #### De novo Transcriptome assembly
 
 -   Variation in assemblies - same read data can generate very different assemblies (Smith-Unna et al. 2015)
@@ -383,55 +385,54 @@ print(s_info$platform)
 ```
 
     ##  setting  value                       
-    ##  version  R version 3.2.4 (2016-03-10)
+    ##  version  R version 3.2.3 (2015-12-10)
     ##  system   x86_64, darwin13.4.0        
     ##  ui       X11                         
     ##  language (EN)                        
     ##  collate  en_US.UTF-8                 
     ##  tz       America/New_York            
-    ##  date     2016-05-09
+    ##  date     2016-05-15
 
 ``` r
 kable(s_info$packages)
 ```
 
-| package    | \*  | version    | date       | source                            |
-|:-----------|:----|:-----------|:-----------|:----------------------------------|
-| assertthat |     | 0.1        | 2013-12-06 | CRAN (R 3.2.0)                    |
-| colorspace |     | 1.2-6      | 2015-03-11 | CRAN (R 3.2.0)                    |
-| DBI        |     | 0.3.1      | 2014-09-24 | CRAN (R 3.2.0)                    |
-| devtools   |     | 1.11.1     | 2016-04-21 | CRAN (R 3.2.5)                    |
-| digest     |     | 0.6.9      | 2016-01-08 | CRAN (R 3.2.3)                    |
-| dplyr      | \*  | 0.4.3.9000 | 2016-02-11 | Github (<hadley/dplyr@9bae2aa>)   |
-| evaluate   |     | 0.8.3      | 2016-03-05 | CRAN (R 3.2.4)                    |
-| formatR    |     | 1.3        | 2016-03-05 | CRAN (R 3.2.4)                    |
-| GGally     | \*  | 1.0.1      | 2016-01-14 | CRAN (R 3.2.3)                    |
-| ggplot2    | \*  | 2.1.0      | 2016-03-01 | CRAN (R 3.2.4)                    |
-| gtable     |     | 0.2.0      | 2016-02-26 | CRAN (R 3.2.3)                    |
-| hexbin     | \*  | 1.27.1     | 2015-08-19 | CRAN (R 3.2.0)                    |
-| highr      |     | 0.5.1      | 2015-09-18 | CRAN (R 3.2.1)                    |
-| htmltools  |     | 0.3.5      | 2016-03-21 | CRAN (R 3.2.4)                    |
-| knitr      | \*  | 1.12.3     | 2016-01-22 | CRAN (R 3.2.3)                    |
-| labeling   |     | 0.3        | 2014-08-23 | CRAN (R 3.2.0)                    |
-| lattice    |     | 0.20-33    | 2015-07-14 | CRAN (R 3.2.4)                    |
-| lazyeval   |     | 0.1.10     | 2015-01-02 | CRAN (R 3.2.0)                    |
-| magrittr   |     | 1.5        | 2014-11-22 | CRAN (R 3.2.0)                    |
-| memoise    |     | 1.0.0      | 2016-01-29 | CRAN (R 3.2.3)                    |
-| munsell    |     | 0.4.3      | 2016-02-13 | CRAN (R 3.2.3)                    |
-| plyr       |     | 1.8.3      | 2015-06-12 | CRAN (R 3.2.0)                    |
-| purrr      | \*  | 0.2.1      | 2016-02-13 | CRAN (R 3.2.3)                    |
-| R6         |     | 2.1.2      | 2016-01-26 | CRAN (R 3.2.3)                    |
-| Rcpp       |     | 0.12.4     | 2016-03-26 | CRAN (R 3.2.4)                    |
-| readr      | \*  | 0.2.2      | 2015-10-22 | CRAN (R 3.2.0)                    |
-| reshape    |     | 0.8.5      | 2014-04-23 | CRAN (R 3.2.0)                    |
-| reshape2   |     | 1.4.1      | 2014-12-06 | CRAN (R 3.2.0)                    |
-| rmarkdown  |     | 0.9.5      | 2016-02-22 | CRAN (R 3.2.3)                    |
-| scales     |     | 0.4.0      | 2016-02-26 | CRAN (R 3.2.3)                    |
-| stringi    |     | 1.0-1      | 2015-10-22 | CRAN (R 3.2.1)                    |
-| stringr    | \*  | 1.0.0.9000 | 2015-11-23 | Github (<hadley/stringr@a67f8f0>) |
-| tidyr      | \*  | 0.4.1      | 2016-02-05 | CRAN (R 3.2.3)                    |
-| withr      |     | 1.0.1      | 2016-02-04 | CRAN (R 3.2.3)                    |
-| yaml       |     | 2.1.13     | 2014-06-12 | CRAN (R 3.2.0)                    |
+| package    | \*  | version | date       | source                               |
+|:-----------|:----|:--------|:-----------|:-------------------------------------|
+| assertthat |     | 0.1     | 2013-12-06 | CRAN (R 3.2.0)                       |
+| colorspace |     | 1.2-6   | 2015-03-11 | CRAN (R 3.2.0)                       |
+| DBI        |     | 0.3.1   | 2014-09-24 | CRAN (R 3.2.0)                       |
+| devtools   |     | 1.9.1   | 2015-09-11 | CRAN (R 3.2.0)                       |
+| digest     |     | 0.6.9   | 2016-01-08 | CRAN (R 3.2.3)                       |
+| dplyr      | \*  | 0.4.3   | 2015-09-01 | CRAN (R 3.2.0)                       |
+| evaluate   |     | 0.8     | 2015-09-18 | CRAN (R 3.2.0)                       |
+| formatR    |     | 1.2.1   | 2015-09-18 | CRAN (R 3.2.0)                       |
+| GGally     | \*  | 1.0.1   | 2016-01-14 | CRAN (R 3.2.3)                       |
+| ggplot2    | \*  | 2.1.0   | 2016-03-01 | CRAN (R 3.2.4)                       |
+| gtable     |     | 0.1.2   | 2012-12-05 | CRAN (R 3.2.0)                       |
+| hexbin     | \*  | 1.27.1  | 2015-08-19 | CRAN (R 3.2.0)                       |
+| highr      |     | 0.5.1   | 2015-09-18 | CRAN (R 3.2.0)                       |
+| htmltools  |     | 0.3     | 2015-12-29 | CRAN (R 3.2.3)                       |
+| knitr      | \*  | 1.12.3  | 2016-01-22 | CRAN (R 3.2.3)                       |
+| labeling   |     | 0.3     | 2014-08-23 | CRAN (R 3.2.0)                       |
+| lattice    |     | 0.20-33 | 2015-07-14 | CRAN (R 3.2.3)                       |
+| lazyeval   |     | 0.1.10  | 2015-01-02 | CRAN (R 3.2.0)                       |
+| magrittr   |     | 1.5     | 2014-11-22 | CRAN (R 3.2.0)                       |
+| memoise    |     | 0.2.1   | 2014-04-22 | CRAN (R 3.2.0)                       |
+| munsell    |     | 0.4.2   | 2013-07-11 | CRAN (R 3.2.0)                       |
+| plyr       |     | 1.8.3   | 2015-06-12 | CRAN (R 3.2.0)                       |
+| purrr      | \*  | 0.2.1   | 2016-02-13 | CRAN (R 3.2.3)                       |
+| R6         |     | 2.1.1   | 2015-08-19 | CRAN (R 3.2.0)                       |
+| Rcpp       |     | 0.12.2  | 2015-11-15 | CRAN (R 3.2.2)                       |
+| readr      | \*  | 0.2.2   | 2015-10-22 | CRAN (R 3.2.0)                       |
+| reshape    |     | 0.8.5   | 2014-04-23 | CRAN (R 3.2.0)                       |
+| reshape2   |     | 1.4.1   | 2014-12-06 | CRAN (R 3.2.0)                       |
+| rmarkdown  |     | 0.9.5   | 2016-01-25 | Github (<rstudio/rmarkdown@e7a1e6b>) |
+| scales     |     | 0.3.0   | 2015-08-25 | CRAN (R 3.2.0)                       |
+| stringi    |     | 1.0-1   | 2015-10-22 | CRAN (R 3.2.0)                       |
+| stringr    | \*  | 1.0.0   | 2015-04-30 | CRAN (R 3.2.0)                       |
+| tidyr      | \*  | 0.4.1   | 2016-02-05 | CRAN (R 3.2.3)                       |
+| yaml       |     | 2.1.13  | 2014-06-12 | CRAN (R 3.2.0)                       |
 
 References
 ----------
