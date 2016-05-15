@@ -1,7 +1,7 @@
 Transcriptome Assembly and Evaluation
 ================
 Nate Olson & Leann Biancani
-May 2, 2016
+May 15, 2016
 
 Background
 ----------
