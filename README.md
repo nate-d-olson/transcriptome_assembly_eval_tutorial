@@ -8,11 +8,11 @@ Background
 
 #### Transcriptomics
 
-      Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Various aims of transcriptomic studies include cataloging all species of transcripts (mRNA, non-coding RNAs, smRNAs), determining gene structure, studying splicing patterns, identifying post-transcriptional modifications, or investigating changes in expression patterns [@Wang:2009di]. Most RNA sequencing (RNA-seq) methods utilize short-read sequencing technologies to sequence a library of cDNA fragments generated from an isolation of RNA molecules. In order to characterize transcripts, these short reads sequences mush be assembled into contiguous sequences (contigs). In order to assemble a transcriptome, reads may either be aligned to a known reference genome or transcriptome sequence, or assembled *de novo*.
+Transcriptomics is the study of the complete set of RNA transcripts in a given sample. Various aims of transcriptomic studies include cataloging all species of transcripts (mRNA, non-coding RNAs, smRNAs), determining gene structure, studying splicing patterns, identifying post-transcriptional modifications, or investigating changes in expression patterns (Wang, Gerstein, and Snyder 2009). Most RNA sequencing (RNA-seq) methods utilize short-read sequencing technologies to sequence a library of cDNA fragments generated from an isolation of RNA molecules. In order to characterize transcripts, these short reads sequences mush be assembled into contiguous sequences (contigs). In order to assemble a transcriptome, reads may either be aligned to a known reference genome or transcriptome sequence, or assembled *de novo*.
 
 #### De novo Transcriptome assembly
 
-      *De novo* transcriptome assembly algorithms build contigs from RNA-seq data without the use of a reference genome. These assemblies, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method, resulting in the ability to generate multiple assemblies from a single set of reads [@smith2015transrate]. As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly. 
+*De novo* transcriptome assembly algorithms build contigs from RNA-seq data without the use of a reference genome. These assemblies, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method, resulting in the ability to generate multiple assemblies from a single set of reads (Smith-Unna et al. 2015). As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly.
 
 -   Variation in assemblies - same read data can generate very different assemblies (Smith-Unna et al. 2015)
     -   within assembly method: many parameters & heuristics (to accommodate variation in library construction, coverage depth, organisms)
@@ -23,7 +23,7 @@ Background
 
 #### Transcriptome assembly evaluation
 
-      Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
+Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
 
 -   Reference based
 -   Read based
@@ -55,39 +55,15 @@ Relevant *C. elegans* Reference Sequences
 ### Assembly results
 
 Assembly metrics calculated using Transrate, see <http://hibberdlab.com/transrate/metrics.html> for a description of the different metrics.
-**Metrics** \* n\_seq - number of contigs in the assembly
-\* smallest - size of the shortest contig (bp)
-\* largest - size of the longest contig (bp)
-\* n50 - largest contig size at which at least 50% of bases are contained in contigs at least this length. \* n\_with\_orf - number of contigs with a open reading frame
 
-``` r
-assembly_metrics_df <- list(no_mods = "data/no_mods/", 
-                            corrected = "data/corrected/",
-                            trimmed = "data/trimmed/", 
-                            trimmedcorrected = "data/trimmedcorrected/") %>% 
-      map(paste0, "assemblies.csv") %>%  
-      map_df(read_csv, .id = "read_set") %>% 
-      select(-assembly) %>% 
-      gather("metric","value", -read_set) %>% 
-      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
-```
+| Dataset          |  \# of Contigs|  Shortest Contig (bp)|  Longest Contig (bp)|  N50 (bp)|  \# Contigs with ORF|
+|:-----------------|--------------:|---------------------:|--------------------:|---------:|--------------------:|
+| no\_mods         |          63353|                   224|                 5446|       465|                12426|
+| corrected        |          61059|                   224|                 4364|       467|                12075|
+| trimmed          |          42438|                   224|                 7533|       531|                10552|
+| trimmedcorrected |          42851|                   224|                 6816|       532|                10645|
 
-``` r
-assembly_metrics_df %>% 
-      filter(metric %in% c("n_seqs", "smallest", "largest", 
-                           "n50", "n_with_orf")) %>%
-      spread(metric, value) %>% 
-      select(read_set, n_seqs, smallest, n50, largest, n_with_orf) %>% 
-      kable(digits = 2,
-            caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
-```
-
-| read\_set        |  n\_seqs|  smallest|  n50|  largest|  n\_with\_orf|
-|:-----------------|--------:|---------:|----:|--------:|-------------:|
-| no\_mods         |    63353|       224|  465|     5446|         12426|
-| corrected        |    61059|       224|  467|     4364|         12075|
-| trimmed          |    42438|       224|  531|     7533|         10552|
-| trimmedcorrected |    42851|       224|  532|     6816|         10645|
+N50 is the length (bp) of contig where &gt; 50% of assembled bases are in contigs at least as long
 
 Assembly evaluation
 -------------------
@@ -104,9 +80,12 @@ Assembly evaluation
 
 For the read based evaluation Transrate maps the raw read data to the transcriptome assembly then uses a set of four metrics to calculate, contig and assembly quality scores.
 
-**Contig Score:** the product of the following metrics. 1. Edit distance - characterization of contig base accuracy, calculated from read-contig edit distance.
-2. Coverage - characterization of based being part of a transcript, calculated from contig based read coverage.
-3. Chimera - probability contig is derived from a single transcript, calculated based on whether the contigs fits a single or double Dirichlet distribution. 4. Complete - probability contig is complete and correct, calculated using read pair alignments.
+**Contig Score:** the product of the following metrics.
+
+1.  Edit distance - characterization of contig base accuracy, calculated from read-contig edit distance.
+2.  Coverage - characterization of based being part of a transcript, calculated from contig based read coverage.
+3.  Chimera - probability contig is derived from a single transcript, calculated based on whether the contigs fits a single or double Dirichlet distribution.
+4.  Complete - probability contig is complete and correct, calculated using read pair alignments.
 
 **Assembly Score** is calculated from the mean contig score and proprotion of read pairs mapping to the assembly.
 
@@ -133,49 +112,9 @@ Transrate uses a reciprical blast approach for reference based assembly evaluati
 
 The unmodified read set was passed as input to Transrate, potentally biasing some metric results towards the unmodifed assembly.
 
-#### Assembly Scores
+#### Read Based Results
 
-Read trimming and error correction resulted in the highest weighted assembly score, while having the lowest contig score cutoff, but a lower optimal score.
-
-Weighted assembly score - takes into consideration expression level, can bias assemblies with high proportions of low expressed poorly assembled contigs.
-
-``` r
-assembly_metrics_df %>% 
-      filter(metric %in% c("score", "optimal_score", "cutoff", "weighted")) %>%
-      spread(metric, value) %>% 
-      kable(digits = 2,
-            caption = "Trinity _C. elegans_ transcriptome Transrate score summary.")
-```
-
-| read\_set        |  cutoff|  optimal\_score|  score|  weighted|
-|:-----------------|-------:|---------------:|------:|---------:|
-| no\_mods         |    0.19|            0.07|   0.02|      0.54|
-| corrected        |    0.24|            0.07|   0.02|      0.65|
-| trimmed          |    0.22|            0.07|   0.03|      0.67|
-| trimmedcorrected |    0.07|            0.06|   0.03|      0.78|
-
-#### Assembly Score Optimization
-
-``` r
-assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
-      map_df(read_csv, .id = "read_set") %>% 
-      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
-```
-
-Relationship between the cutoff for contig score and assembly score.
-
-``` r
-assembly_score_opt %>% 
-      ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
-            theme_bw() +
-            labs(x = "Contig Score Threshold", y = "Assembly Score")
-```
-
-    ## Warning: Removed 2 rows containing missing values (geom_path).
-
-![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)
-
-### Contigs
+##### Contigs
 
 ``` r
 contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
@@ -200,53 +139,47 @@ contig_stat %>%
                               alpha = 0.25) + theme_bw()
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
-Relationship between contig score and length.
-
-``` r
-contig_stat %>% 
-      ggplot() + geom_hex(aes(x = length, y = score)) +
-            geom_hline(aes(yintercept = cutoff), 
-                       color = "grey60", linetype = 2) +
-            theme_bw() +
-            labs(x = "Contig Length (bp)", y = "Contig Score") +
-            facet_wrap(~read_set)
-```
-
-![2D histogram of contig score and legnth, with color indicating abundance. Grey dotted lines are the contig score cutoff for optimal assembly score.](README_files/figure-markdown_github/score_length-1.png)
-
-Proportion of bases in reads map to the transcript that support the transcript contig.
+##### Assembly Score
 
 ``` r
-contig_stat %>% 
-      ggplot() + geom_histogram(aes(x = p_good)) +
-            theme_bw() +
-            labs(x = "Proportion of Bases Aggree with Transcript",
-                 y = "Count") +
-            facet_grid(contig_filt~read_set) +
-            theme(legend.position = "bottom")
+assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
+      map_df(read_csv, .id = "read_set") %>% 
+      mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-
-![Histogram of the proportion of bases in agreement with contig and contig length.](README_files/figure-markdown_github/p_good_density-1.png)
-
-Proportion of bases in the contig covered, at least one read aligned to the contig coverage that position.
+Relationship between the cutoff for contig score and assembly score.
 
 ``` r
-contig_stat %>% 
-      ggplot() + geom_histogram(aes(x = p_bases_covered)) +
+assembly_score_opt %>% 
+      ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
             theme_bw() +
-            labs(x = "Proportion of Covered Bases", 
-                 y = "Count") +
-            facet_grid(contig_filt~read_set) +
-            theme(legend.position = "bottom")
+            labs(x = "Contig Score Threshold", y = "Assembly Score")
 ```
 
-    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+    ## Warning: Removed 2 rows containing missing values (geom_path).
 
-![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)
+
+###### Assembly Score Summary
+
+Read trimming and error correction resulted in the highest weighted assembly score, while having the lowest contig score cutoff, but a lower optimal score.
+
+Weighted assembly score - takes into consideration expression level, can bias assemblies with high proportions of low expressed poorly assembled contigs.
+
+| Dataset          |  Assembly Score|  Optimized Score|  Contig Score Threshold|  Weighted Score|
+|:-----------------|---------------:|----------------:|-----------------------:|---------------:|
+| no\_mods         |           0.022|            0.068|                   0.188|           0.538|
+| corrected        |           0.022|            0.069|                   0.243|           0.652|
+| trimmed          |           0.031|            0.067|                   0.218|           0.667|
+| trimmedcorrected |           0.032|            0.063|                   0.073|           0.778|
+
+##### Contig Score Breakdown
+
+The following figures show the relationship between individual contig metric distributions and the optimized assembly contig score threshold.
+
+###### Edit distance
 
 Mean per-base contig edit distance, average number of base pair differences between contig and reads.
 
@@ -262,7 +195,27 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
+![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
+
+###### Coverage
+
+Proportion of bases in the contig covered, at least one read aligned to the contig coverage that position.
+
+``` r
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_bases_covered)) +
+            theme_bw() +
+            labs(x = "Proportion of Covered Bases", 
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
 ![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
+
+###### Chimera
 
 Probability that a contig is not a chimeric misassembly, where sequences from two different contigs are incorrectly assembled together.
 
@@ -280,50 +233,25 @@ contig_stat %>%
 
 ![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-The individual parameters used to calculate the contig score are weakly correlated. Correlation values are similar to thoes presented in the Transrate publication.
+###### Complete
+
+Proportion of bases in reads map to the transcript that support the transcript contig.
 
 ``` r
-for(i in names(results_list)){
-      pl <- contig_stat %>% filter(read_set == i) %>% 
-            select(p_good, p_bases_covered, p_seq_true, p_not_segmented) %>% 
-            ggcorr(method = c("pairwise","spearman"),label = TRUE) + 
-                  ggtitle(i)
-      print(pl)
-}
+contig_stat %>% 
+      ggplot() + geom_histogram(aes(x = p_good)) +
+            theme_bw() +
+            labs(x = "Proportion of Bases Agree with Transcript",
+                 y = "Count") +
+            facet_grid(contig_filt~read_set) +
+            theme(legend.position = "bottom")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)![](README_files/figure-markdown_github/unnamed-chunk-11-2.png)![](README_files/figure-markdown_github/unnamed-chunk-11-3.png)![](README_files/figure-markdown_github/unnamed-chunk-11-4.png)
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-#### Reference Based Results
+![Histogram of the proportion of bases in agreement with contig and contig length.](README_files/figure-markdown_github/p_good_density-1.png)
 
-**TODO** Describe CRB method
-
-``` r
-ref_contig <- results_list %>% map(paste0,"contigs.csv") %>% 
-      map_df(read_csv, .id = "read_set")
-```
-
-\_\_TODO\_\_Summary table with assembly, p contigs with CRBB (proportion of contigs iwth CRB-Blast), p\_ref crbb proprotion ref with CRBB, ref coverage - proportion of reference bases covered by CRB hits, collapse factor - high chimeras, p covX - proportion protein coverage, Comprison of contigs with and with out CRB hits. Assemblies using untrimmed read set had a larger number of contigs, but little impact of the proportion of CRB hits.
-
-``` r
-ggplot(ref_contig) + geom_bar(aes(x = read_set)) + facet_wrap(~has_crb)
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
-
-Comprison of contig length and ORF length for contigs with and without CRB hits. Contigs with CRB hits were long and contined larger predicted ORFs.
-
-``` r
-ggplot(ref_contig) + geom_boxplot(aes(x = has_crb, y = length)) + facet_wrap(~read_set)
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
-
-``` r
-ggplot(ref_contig) + geom_boxplot(aes(x = has_crb, y = orf_length)) + facet_wrap(~read_set)
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-15-1.png)
+#### Reference Based Evaluation
 
 Exploring contigs with CRB hits.
 
@@ -336,41 +264,27 @@ ggplot(crb_contig) + geom_hex(aes(x = length, y = reference_coverage)) +
       facet_wrap(~read_set)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 ``` r
 ggplot(crb_contig) + geom_hex(aes(x = orf_length, y = reference_coverage)) +
       facet_wrap(~read_set)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
-### Contig Score and Hit Coverage
+#### Read and Reference Evaluation Comparison
 
-``` r
-contig_crb_score <- crb_contig %>% left_join(contig_stat)
-```
+![Relationship between reference and read based quality assessment.](README_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
-    ## Joining by: c("read_set", "contig_name", "length", "prop_gc", "gc_skew", "at_skew", "cpg_count", "cpg_ratio", "orf_length", "linguistic_complexity_6")
-
-**TODO** Better way to present relationship
-
-``` r
-ggplot(contig_crb_score) + 
-      geom_hex(aes(x = reference_coverage, y = score)) +
-      facet_wrap(~read_set)
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-20-1.png)
-
-**TODO** Upper limit? correlation between reference coverage and score Looking at tpm
+Contig score is unrealated to reference transcript coverage.
 
 Conclusions
 -----------
 
--   How did Trinity do?
--   How did transrate compare to other methods?
--   Recommendations for transcriptome assembly and evaluation
+-   Read trimming has a greater impact on assembly size and number of contigs than error correction.
+-   Read based assembly evaluation - potentially biased by the use of un-modified reads
+-   No clear relationship between contig score and reference coverage
 
 Session Information
 -------------------
@@ -416,8 +330,12 @@ kable(s_info$packages)
 | lattice    |     | 0.20-33    | 2015-07-14 | CRAN (R 3.2.4)                    |
 | lazyeval   |     | 0.1.10     | 2015-01-02 | CRAN (R 3.2.0)                    |
 | magrittr   |     | 1.5        | 2014-11-22 | CRAN (R 3.2.0)                    |
+| MASS       |     | 7.3-45     | 2015-11-10 | CRAN (R 3.2.2)                    |
+| Matrix     |     | 1.2-6      | 2016-05-02 | CRAN (R 3.2.5)                    |
 | memoise    |     | 1.0.0      | 2016-01-29 | CRAN (R 3.2.3)                    |
+| mgcv       |     | 1.8-12     | 2016-03-03 | CRAN (R 3.2.4)                    |
 | munsell    |     | 0.4.3      | 2016-02-13 | CRAN (R 3.2.3)                    |
+| nlme       |     | 3.1-128    | 2016-05-10 | CRAN (R 3.2.5)                    |
 | plyr       |     | 1.8.3      | 2015-06-12 | CRAN (R 3.2.0)                    |
 | purrr      | \*  | 0.2.1      | 2016-02-13 | CRAN (R 3.2.3)                    |
 | R6         |     | 2.1.2      | 2016-01-26 | CRAN (R 3.2.3)                    |
@@ -443,3 +361,5 @@ Grabherr, Manfred G, Brian J Haas, Moran Yassour, Joshua Z Levin, Dawn A Thompso
 Haas, Brian J, Alexie Papanicolaou, Moran Yassour, Manfred Grabherr, Philip D Blood, Joshua Bowden, Matthew Brian Couger, et al. 2013. “De Novo Transcript Sequence Reconstruction from RNA-Seq Using the Trinity Platform for Reference Generation and Analysis.” *Nature Protocols* 8 (8). Nature Publishing Group: 1494–1512.
 
 Smith-Unna, Richard D, Chris Boursnell, Rob Patro, Julian M Hibberd, and Steven Kelly. 2015. “TransRate: Reference Free Quality Assessment of de-Novo Transcriptome Assemblies.” *BioRxiv*. Cold Spring Harbor Labs Journals, 021626.
+
+Wang, Zhong, Mark Gerstein, and Michael Snyder. 2009. “RNA-Seq: a revolutionary tool for transcriptomics.” *Nature Reviews. Genetics* 10 (1): 57–63.
