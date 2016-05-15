@@ -20,16 +20,20 @@ Trinity (M. G. Grabherr et al. 2011, Haas et al. (2013))
 
 Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
 
-C. elegans Transcriptome Assembly and Evaluation
-------------------------------------------------
+Transcriptome Assembly and Evaluation
+-------------------------------------
 
 #### Source data
 
-Sequence data identified by searching SRA for *C. elegans* and limiting results to RNA, identified a study for an Illumina HiSeq 2000, 94 bp paired end run. Accession SRR2969230 was used to generate and evaluate the assembly.
+A set of raw RNA-seq reads for *C. elegans* was identified and downloaded from the SRA database. shell command:
 
-> Caenorhabditis elegans Transcriptome or Gene expression BioProject Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
+``` bash
+Fastq-dump -I --split-files SRR2969230
+```
 
-Relevant *C. elegans* Reference Sequences
+Dataset Information: \* Accession number: SRR2969230 \* Description: &gt; Total RNA from tissue disrupted “whole worm” samples was isolated and amplified using the NuGen Ovation RNAseq v2 kit. Amplified cDNA was sheared to 200bp fragments. Library was prepared using the Illumina TruSeq DNA Sample Prep kit. \* Study: &gt; Caenorhabditis elegans Transcriptome or Gene expression BioProject Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
+
+#### Relevant *C. elegans* Reference Sequences
 
 -   Transcriptome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/gtf/caenorhabditis_elegans/Caenorhabditis_elegans.WBcel235.31.gtf.gz>
 -   Genome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/dna/Caenorhabditis_elegans.WBcel235.31.dna.chromosome.*.fa.gz>
@@ -134,7 +138,7 @@ contig_stat %>%
                               alpha = 0.25) + theme_bw()
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)<!-- -->
 
 ##### Assembly Score
 
@@ -155,7 +159,7 @@ assembly_score_opt %>%
 
     ## Warning: Removed 2 rows containing missing values (geom_path).
 
-![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-7-1.png)<!-- -->
 
 ###### Assembly Score Summary
 
@@ -190,7 +194,7 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)<!-- -->
 
 ###### Coverage
 
@@ -208,7 +212,7 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)<!-- -->
 
 ###### Chimera
 
@@ -226,7 +230,7 @@ contig_stat %>%
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](README_files/figure-markdown_github/unnamed-chunk-10-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-11-1.png)<!-- -->
 
 ###### Complete
 
@@ -253,13 +257,13 @@ Histogram of the proportion of bases in agreement with contig and contig length.
 
 Contigs were evaluated based on the reference coverage for contigs with CRB hits. Reference coverage was calculated as the proportion of the reference transcript covered by the contig.
 
-Relationship between reference coverage and contig length. ![](README_files/figure-markdown_github/unnamed-chunk-12-1.png)<!-- -->
+Relationship between reference coverage and contig length. ![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)<!-- -->
 
-![](README_files/figure-markdown_github/unnamed-chunk-13-1.png)<!-- -->
+![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)<!-- -->
 
 #### Read and Reference Evaluation Comparison
 
-<img src="README_files/figure-markdown_github/unnamed-chunk-14-1.png" alt="Relationship between reference and read based quality assessment."  />
+<img src="README_files/figure-markdown_github/unnamed-chunk-15-1.png" alt="Relationship between reference and read based quality assessment."  />
 <p class="caption">
 Relationship between reference and read based quality assessment.
 </p>
