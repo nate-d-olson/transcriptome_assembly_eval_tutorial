@@ -1,5 +1,6 @@
 ---
-title: "Trinity and Transrate Tutorial"
+title: "Transcriptome Assembly and Evaluation"
+subtitle: "using Trinity and Transrate"
 author: "Nate Olson & Leann Biancani"
 date: "May 2, 2016"
 output: github_document
@@ -106,17 +107,25 @@ assembly_metrics_df %>%
 
 ## Assembly evaluation
 ### Running transrate
-* Installation
-      * Precompiled binaries available from website (http://hibberdlab.com/transrate/), along with instructions to build from source
-      * also command to install dependencies `transrate --install-deps type` where type can be either `all`, `read`, or `ref`.
-      * See Transrate website for additional information for install. 
+
+#### Installation
+* Precompiled binaries available from website (http://hibberdlab.com/transrate/), along with instructions to build from source.
+* Command to install dependencies `transrate --install-deps type` where type can be either `all`, `read`, or `ref`.
+* See Transrate website for additional information for install. 
+
+#### Read Based Evaluation  
+For the read based evaluation Transrate maps the raw read data to the transcriptome assembly then uses a set of four metrics to calculate, contig and assembly quality scores. 
+
+__Contig Score:__ the product of the following metrics.
+1. Edit distance - characterization of contig base accuracy, calculated from read-contig edit distance.  
+2. Coverage - characterization of based being part of a transcript, calculated from contig based read coverage.  
+3. Chimera - probability contig is derived from a single transcript, calculated based on whether the contigs fits a single or double Dirichlet distribution. 
+4. Complete - probability contig is complete and correct, calculated using read pair alignments.
+
+__Assembly Score__ is calculated from the mean contig score and proprotion of read pairs mapping to the assembly.  
 
 
-__Command Line__  
-Correcting transcript IDs
-
-_Read Based_
-
+__Command Line__
 ```
 transrate \
   --left=SRR2969230_1.fastq \
@@ -125,7 +134,11 @@ transrate \
   --output=transrate/
 ```
 
-_Reference Based_
+#### Reference Base Evaluation  
+Transrate uses a reciprical blast approach for reference based assembly evaluation. 
+A sequence is classified as the reference for a contig if the reference sequence and contig are the top BLAST hits when comparing the reference sequence against all contigs and comparing the contig againts all reference sequences. The reciprical BLAST method is described in @aubry2014deep. 
+
+__Command Line__
 ```
 transrate \
   --reference=Caenorhabditis_elegans.WBcel235.31.pep.all.fa \
@@ -137,19 +150,12 @@ transrate \
 The unmodified read set was passed as input to Transrate, 
 potentally biasing some metric results towards the unmodifed assembly.
 
-#### run time
-__TODO__ Add runtime for other assemblies and reference based evaluations  
-
-- real    890m58.016s
-- user    6665m50.869s
-- sys     11m5.890s
-
 #### Assembly Scores
 Read trimming and error correction resulted in the highest weighted assembly score, 
 while having the lowest contig score cutoff, 
 but a lower optimal score.  
 
-Weighted assembly score - takes into consideration expression level, generous to assemblies with high proportions of low expressed poorly assembled contigs.
+Weighted assembly score - takes into consideration expression level, can bias assemblies with high proportions of low expressed poorly assembled contigs.
 
 ```{r}
 assembly_metrics_df %>% 
@@ -176,23 +182,6 @@ assembly_score_opt %>%
 ```
 
 ### Contigs
-see contigs.rb and read_metrics.rb for additional information about metrics
-   def score
-      return @score if @score != -1
-      prod =
-        [p_bases_covered, 0.01].max.to_f * # proportion of bases covered
-        [p_not_segmented, 0.01].max.to_f * # prob contig has 0 changepoints
-        [p_good, 0.01].max.to_f * # proportion of reads that mapped good
-        [p_seq_true, 0.01].max.to_f # scaled 1 - mean per-base edit distance
-      @score = [prod, 0.01].max
-Contig Score
-> 
-There are four components to the contig score:
-1. A measure of whether each base has been called correctly. This is estimated using the mean per-base edit distance, i.e. how many changes would have to be made to a read covering a base before the sequence of the read and the covered region of the contig agreed perfectly.
-2. A measure of whether each base is truly part of the transcript. This is estimated by determining whether any reads provide agreeing coverage for a base.
-3. The probability that the contig is derived from a single transcript (rather than pieces of two or more transcripts). This is measured as the probability that the read coverage is best modelled by a single Dirichlet distribution, rather than two or more distributions.
-4. The probability that the contig is structurally complete and correct. This is estimated as the proportion of assigned read pairs that agree with the structure and composition of the contig, which in turn is calculated by classifying the read pair alignments.
-
 ```{r}
 contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
       map_df(read_csv, .id = "read_set")
