@@ -25,9 +25,9 @@ Transcriptome Assembly and Evaluation
 
 #### Source data
 
-A set of raw RNA-seq reads for *C. elegans* was identified and downloaded from the SRA database.
+A single set of raw RNA-seq reads for *C. elegans* was identified and downloaded from the SRA database.
 
-Shell command:
+shell commands:
 
 ``` bash
 Fastq-dump -I --split-files SRR2969230
@@ -40,9 +40,9 @@ Dataset Information:
 
 > Total RNA from tissue disrupted “whole worm” samples was isolated and amplified using the NuGen Ovation RNAseq v2 kit. Amplified cDNA was sheared to 200bp fragments. Library was prepared using the Illumina TruSeq DNA Sample Prep kit.
 
--   Study:
+-   Study: Caenorhabditis elegans Transcriptome or Gene expression BioProject
 
-> Caenorhabditis elegans Transcriptome or Gene expression BioProject Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
+> Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
 
 #### Relevant *C. elegans* Reference Sequences
 
@@ -50,9 +50,20 @@ Dataset Information:
 -   Genome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/dna/Caenorhabditis_elegans.WBcel235.31.dna.chromosome.*.fa.gz>
 -   Proteome: <ftp://ftp.ensemblgenomes.org/pub/release-31/metazoa/fasta/caenorhabditis_elegans/pep/Caenorhabditis_elegans.WBcel235.31.pep.all.fa.gz>
 
-#### Read Trimming
+#### Data Processing
 
-#### Error Correction
+-   Read Trimming
+
+-   Error Correction
+
+#### Datasets for Assembly
+
+Starting with a single set of RNA-seq reads, *de novo* assemblies were generated for 4 datasets each with a different level of data processing. These processing steps are included in order to improve the quality of the *de novo* assembly. We aim to investigate whether such improvement is detected by the assembly evaluation algorithm.
+
+-   **No Modifications**: Raw RNA-seq reads were assembled directly with no further processing.
+-   **Trimmed Reads**: Raw RNA-seq reads were trimmed with Trim Galore.
+-   **Corrected Reads**: Error correction was performed on raw RNA-seq reads with BayesHammer.
+-   **Trimmed & Corrected**: Raw RNA-seq reads were trimmed with Trim Galore and error correction was performed on the trimmed reads with BayesHammer.
 
 #### Assembly
 
