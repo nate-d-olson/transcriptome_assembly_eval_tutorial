@@ -109,10 +109,20 @@ Starting with a single set of RNA-seq reads, *de novo* assemblies were generated
 * __Trimmed & Corrected__: Raw RNA-seq reads were trimmed with Trim Galore and error correction was performed on the trimmed reads with BayesHammer.
 
 #### Assembly
-### How to run trinity  
-* Link to website  
-* Parameter description
-* Command used to generate _C. elegans_ assembly
+
+The four differently processed RNA-seq data sets were assembled individually using Trinity v2.0.6 [@Grabherr:2011jb]. The documentation is available [here](https://github.com/trinityrnaseq/trinityrnaseq/wiki). Trinity is a de Bruijn graph based assembly algorithm designed specifically for the *de novo* reconstruction of transcriptomes from RNA-seq reads [@haas2013novo].
+
+_Command Line_
+```
+Trinity \
+  --seqType fq \
+  --left SRR2969230_1_val_1.fq \
+  --right SRR2969230_2_val_2.fq \
+  --CPU $NSLOTS \
+  --max_memory 20G \
+  --full_cleanup \
+  --output Trinity_sequences
+```
 
 ### Assembly results  
 Assembly metrics calculated using Transrate, see http://hibberdlab.com/transrate/metrics.html for a description of the different metrics.  
