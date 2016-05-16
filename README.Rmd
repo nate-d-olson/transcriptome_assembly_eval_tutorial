@@ -154,35 +154,37 @@ potentally biasing some metric results towards the unmodifed assembly.
 
 #### Read Based Results
 ##### Contigs
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 contig_stat <- results_list %>% map(paste0,"contigs.csv") %>% 
       map_df(read_csv, .id = "read_set")
 
-contig_cutoff <- assembly_metrics_df %>% filter(metric == "cutoff") %>% 
+contig_cutoff <- assembly_metrics_df %>% 
+      filter(metric == "cutoff") %>% 
       select(-metric) %>% rename(cutoff = value)
 contig_stat <- contig_stat %>% left_join(contig_cutoff) %>% 
-      mutate(contig_filt = cutoff < score)
+      mutate(contig_filt = ifelse(cutoff < score,
+                                  ">threshold","<threshold"))
 ```
 
 
 __Contig Score Distribution__
 Trimming reads resulted in a higher proportion of contigs with scores greater than 0.25 then assemblies using unmodified reads or only error corrected reads.  
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 contig_stat %>% 
       ggplot() + geom_density(aes(x = score, color = read_set, fill = read_set), 
                               alpha = 0.25) + theme_bw()
 ```
 
 ##### Assembly Score
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_score_opt <- results_list %>% map(paste0,"assembly_score_optimisation.csv") %>% 
       map_df(read_csv, .id = "read_set") %>% 
       mutate(read_set = factor(read_set, levels = c("no_mods","corrected","trimmed","trimmedcorrected")))
 ```
 
 Relationship between the cutoff for contig score and assembly score.
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 assembly_score_opt %>% 
       ggplot() + geom_path(aes(x = cutoff, y = assembly_score, color = read_set)) +
             theme_bw() +
@@ -209,12 +211,13 @@ assembly_metrics_df %>%
 
 
 ##### Contig Score Breakdown
-The following figures show the relationship between individual contig metric distributions and the optimized assembly contig score threshold.  
+The following figures show the relationship between individual contig metric distributions and the optimized assembly contig score threshold. 
+For all four metrics the metric distribution shifts to the right (increases) for contigs with scores above the optimized assembly contig score threashold.
 
 ###### Edit distance 
 Mean per-base contig edit distance, average number of base pair differences between contig and reads.
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_seq_true)) +
             theme_bw() +
@@ -227,7 +230,7 @@ contig_stat %>%
 ###### Coverage 
 Proportion of bases in the contig covered, at least one read aligned to the contig coverage that position.
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_bases_covered)) +
             theme_bw() +
@@ -242,7 +245,7 @@ contig_stat %>%
 Probability that a contig is not a chimeric misassembly, 
 where sequences from two different contigs are incorrectly assembled together.
 
-```{r}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_not_segmented)) +
             theme_bw() +
@@ -254,7 +257,7 @@ contig_stat %>%
 
 ###### Complete 
 Proportion of bases in reads map to the transcript that support the transcript contig. 
-```{r p_good_density, fig.cap = "Histogram of the proportion of bases in agreement with contig and contig length."}
+```{r p_good_density, fig.cap = "Histogram of the proportion of bases in agreement with contig and contig length.", echo=FALSE, message=FALSE, warning=FALSE}
 contig_stat %>% 
       ggplot() + geom_histogram(aes(x = p_good)) +
             theme_bw() +
@@ -267,7 +270,7 @@ contig_stat %>%
 
 
 #### Reference Based Evaluation
-Contigs were evaluated based on the reference coverage for contigs with CRB hits. 
+Contigs were evaluated based on the reference coverage for contigs with CRB hits, using the _C. elegans_ proteome as the reference. 
 Reference coverage was calculated as the proportion of the reference transcript covered by the contig.  
 
 ```{r source_ref_dir, warning=FALSE, message=FALSE, echo = FALSE}
@@ -292,13 +295,16 @@ ggplot(crb_contig) + geom_hex(aes(x = length, y = reference_coverage)) +
       facet_wrap(~read_set) + theme_bw() + labs(x = "Contig Length", y = "Reference Coverage")
 ```
 
+Relationship between reference coverage and contig ORF length.
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 ggplot(crb_contig) + geom_hex(aes(x = orf_length, y = reference_coverage)) +
       facet_wrap(~read_set) + theme_bw() + labs(x = "Contig ORF Length", y = "Reference Coverage")
 ```
 
 
-#### Read and Reference Evaluation Comparison
+#### Read and Reference Evaluation Comparison  
+No clear relationship between contig score and reference coverage.  
+
 ```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.cap = "Relationship between reference and read based quality assessment.", fig.width = 12}
 ggplot(contig_crb_score) + 
       geom_density2d(aes(x = reference_coverage, y = score), color = "darkblue") +
@@ -307,8 +313,6 @@ ggplot(contig_crb_score) +
       theme_bw() + labs(x = "Reference Transcript Coverage", y = "Contig Score")
 ```
 
-Contig score is unrealated to reference transcript coverage.  
-
 ## Conclusions
 - Read trimming has a greater impact on assembly size and number of contigs than error correction.  
 - Read based assembly evaluation - potentially biased by the use of un-modified reads  
@@ -316,7 +320,7 @@ Contig score is unrealated to reference transcript coverage.
 
 ## Session Information
 __Session Info__
-```{r s_info}
+```{r s_info, echo=FALSE, message=FALSE, warning=FALSE}
 s_info <- devtools::session_info()
 print(s_info$platform)
 kable(s_info$packages)
