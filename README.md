@@ -36,7 +36,7 @@ A single set of raw RNA-seq reads for *C. elegans* was identified and downloaded
 -   Accession number: SRR2969230
 -   Description:
 
-> Total RNA from tissue disrupted “whole worm” samples was isolated and amplified using the NuGen Ovation RNAseq v2 kit. Amplified cDNA was sheared to 200bp fragments. Library was prepared using the Illumina TruSeq DNA Sample Prep kit.
+> Total RNA from tissue disrupted “whole worm” samples was isolated and amplified using the NuGen Ovation RNA-seq v2 kit. Amplified cDNA was sheared to 200bp fragments. Library was prepared using the Illumina TruSeq DNA Sample Prep kit.
 
 -   Study: Caenorhabditis elegans Transcriptome or Gene expression BioProject
 
@@ -67,7 +67,7 @@ Using the following commands, Trim Galore removes low quality base calls from th
 
 ##### Error Correction
 
-Sequencing errors in the RNA-seq reads were corrected using [BayesHammer](http://bioinf.spbau.ru/en/spades/bayeshammer) which is part of SPAdes v3.5.0 genome assembly pipeline. The manual for this version is available [here](http://spades.bioinf.spbau.ru/release3.5.0/manual.html). BayesHammer is a Bayesian subclustering algorithm designed to identify and correct sequencing errors in illumina reads.
+Sequencing errors in the RNA-seq reads were corrected using [BayesHammer](http://bioinf.spbau.ru/en/spades/bayeshammer) which is part of SPAdes v3.5.0 genome assembly pipeline. The manual for this version is available [here](http://spades.bioinf.spbau.ru/release3.5.0/manual.html). BayesHammer is a Bayesian sub-clustering algorithm designed to identify and correct sequencing errors in Illumine reads.
 
 *Command Line*
 
@@ -79,7 +79,7 @@ Sequencing errors in the RNA-seq reads were corrected using [BayesHammer](http:/
 
 #### Datasets for Assembly
 
-Starting with a single set of RNA-seq reads, *de novo* assemblies were generated for 4 datasets each with a different level of data processing. These processing steps are included in order to improve the quality of the *de novo* assembly. We aim to investigate whether such improvement is detected by the assembly evaluation algorithm.
+Starting with a single set of RNA-seq reads, *de novo* assemblies were generated for 4 data sets each with a different level of data processing. These processing steps are included in order to improve the quality of the *de novo* assembly. We aim to investigate whether such improvement is detected by the assembly evaluation algorithm.
 
 -   **No Modifications**: Raw RNA-seq reads were assembled directly with no further processing.
 -   **Trimmed Reads**: Raw RNA-seq reads were trimmed with Trim Galore.
@@ -136,7 +136,7 @@ For the read based evaluation Transrate maps the raw read data to the transcript
 3.  Chimera - probability contig is derived from a single transcript, calculated based on whether the contigs fits a single or double Dirichlet distribution.
 4.  Complete - probability contig is complete and correct, calculated using read pair alignments.
 
-**Assembly Score** is calculated from the mean contig score and proprotion of read pairs mapping to the assembly.
+**Assembly Score** is calculated from the mean contig score and proportion of read pairs mapping to the assembly.
 
 *Command Line*
 
@@ -148,7 +148,7 @@ For the read based evaluation Transrate maps the raw read data to the transcript
 
 #### Reference Base Evaluation
 
-Transrate uses a reciprical blast approach for reference based assembly evaluation. A sequence is classified as the reference for a contig if the reference sequence and contig are the top BLAST hits when comparing the reference sequence against all contigs and comparing the contig againts all reference sequences. The reciprical BLAST method is described in Aubry et al. (2014).
+Transrate uses a reciprocal blast approach for reference based assembly evaluation. A sequence is classified as the reference for a contig if the reference sequence and contig are the top BLAST hits when comparing the reference sequence against all contigs and comparing the contig against all reference sequences. The reciprocal BLAST method is described in Aubry et al. (2014).
 
 *Command Line*
 
@@ -159,7 +159,7 @@ Transrate uses a reciprical blast approach for reference based assembly evaluati
 
 ### Transrate results
 
-The unmodified read set was passed as input to Transrate, potentally biasing some metric results towards the unmodifed assembly.
+The unmodified read set was passed as input to Transrate, potentially biasing some metric results towards the unmodified assembly.
 
 #### Read Based Results
 
@@ -188,7 +188,7 @@ Weighted assembly score - takes into consideration expression level, can bias as
 
 ##### Contig Score Breakdown
 
-The following figures show the relationship between individual contig metric distributions and the optimized assembly contig score threshold. For all four metrics the metric distribution shifts to the right (increases) for contigs with scores above the optimized assembly contig score threashold.
+The following figures show the relationship between individual contig metric distributions and the optimized assembly contig score threshold. For all four metrics the metric distribution shifts to the right (increases) for contigs with scores above the optimized assembly contig score threshold.
 
 ###### Edit distance
 
@@ -237,7 +237,7 @@ Conclusions
 -----------
 
 -   Read trimming has a greater impact on assembly size and number of contigs than error correction.
--   Our read based assembly evaluation potentially biased by the use of un-modified reads to evalulate all four assemblies. The trimmed read assemblies might be penalized as some of the untrimmed reads were unable to align the to the trimmed read assemblies.
+-   Our read based assembly evaluation potentially biased by the use of un-modified reads to evaluate all four assemblies. The trimmed read assemblies might be penalized as some of the untrimmed reads were unable to align the to the trimmed read assemblies.
 -   We observed no clear relationship between contig score and reference coverage, this is potentially due to correct contigs shorter than the reference transcript having low reference coverage.
 
 Session Information
