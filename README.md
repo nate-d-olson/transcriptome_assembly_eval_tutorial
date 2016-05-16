@@ -84,7 +84,7 @@ Assembly metrics calculated using Transrate, see <http://hibberdlab.com/transrat
 | trimmed          |          42438|                   224|                 7533|       531|                10552|
 | trimmedcorrected |          42851|                   224|                 6816|       532|                10645|
 
-N50 is the length (bp) of contig where &gt; 50% of assembled bases are in contigs at least as long
+N50 is the contig length (bp) where 50% of assembled bases are in contigs of this length or longer.
 
 Assembly evaluation
 -------------------
