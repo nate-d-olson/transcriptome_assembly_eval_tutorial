@@ -25,13 +25,24 @@ Transcriptome Assembly and Evaluation
 
 #### Source data
 
-A set of raw RNA-seq reads for *C. elegans* was identified and downloaded from the SRA database. shell command:
+A set of raw RNA-seq reads for *C. elegans* was identified and downloaded from the SRA database.
+
+Shell command:
 
 ``` bash
 Fastq-dump -I --split-files SRR2969230
 ```
 
-Dataset Information: \* Accession number: SRR2969230 \* Description: &gt; Total RNA from tissue disrupted “whole worm” samples was isolated and amplified using the NuGen Ovation RNAseq v2 kit. Amplified cDNA was sheared to 200bp fragments. Library was prepared using the Illumina TruSeq DNA Sample Prep kit. \* Study: &gt; Caenorhabditis elegans Transcriptome or Gene expression BioProject Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
+Dataset Information:
+
+-   Accession number: SRR2969230
+-   Description:
+
+> Total RNA from tissue disrupted “whole worm” samples was isolated and amplified using the NuGen Ovation RNAseq v2 kit. Amplified cDNA was sheared to 200bp fragments. Library was prepared using the Illumina TruSeq DNA Sample Prep kit.
+
+-   Study:
+
+> Caenorhabditis elegans Transcriptome or Gene expression BioProject Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most important biological decisions, from rates of growth, development, and metabolism, to reproduction and longevity. However, the neuron-specific IIS/FOXO targets that regulate these functions are still unknown. By isolating C. elegans neurons for transcriptional profiling, we identified both the wild-type and IIS/FOXO neuronal transcriptomes. Here we deposit the sequences for wt adult neurons and IIS mutants, as well as for isolated adult mechanosensory neurons.
 
 #### Relevant *C. elegans* Reference Sequences
 
