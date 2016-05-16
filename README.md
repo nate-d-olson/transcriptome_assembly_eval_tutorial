@@ -52,7 +52,9 @@ A single set of raw RNA-seq reads for *C. elegans* was identified and downloaded
 
 **Read Trimming**
 
-RNA-seq reads were trimmed with [Trim Galore v0.4.0](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/). The user guide for this version is available [here](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/trim_galore_User_Guide_v0.4.0.pdf). Trim Galore is a wrapper script that automates adapter trimming and quality control using the programs [Cutadapt](https://cutadapt.readthedocs.io/en/stable/) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/). Using the following commands, Trim Galore trims low quality base calls from the 3' end using a Phred score threshold of 20, finds and removes adapter sequences from the 3' end using standard Illumina paired-end adapter sequences, clips 5 base pairs from the 5' end to combat bias due to to the end-repair libary prep step, clips an additional 5 base pairs from the 3' end to further improve quality, and discards any reads that become shorter than 20 base pairs due to either quality filtering or trimming.
+RNA-seq reads were trimmed with [Trim Galore v0.4.0](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/). The user guide for this version is available [here](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/trim_galore_User_Guide_v0.4.0.pdf). Trim Galore is a wrapper script that automates adapter trimming and quality control using the programs [Cutadapt](https://cutadapt.readthedocs.io/en/stable/) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+
+Using the following commands, Trim Galore removes low quality base calls from the 3' end using a Phred score threshold of 20, finds and removes adapter sequences from the 3' end using standard Illumina paired-end adapter sequences, clips 5 bp from the 5' end to combat bias due to to the end-repair libary prep step, clips an additional 5 bp from the 3' end to further improve quality, and discards any reads that become shorter than 20 bp due to either quality filtering or trimming.
 
 `Command Line`
 
@@ -64,6 +66,16 @@ RNA-seq reads were trimmed with [Trim Galore v0.4.0](http://www.bioinformatics.b
       SRR2969230_1.fastq SRR2969230_2.fastq
 
 **Error Correction**
+
+Sequencing errors in the RNA-seq reads were corrected using [BayesHammer](http://bioinf.spbau.ru/en/spades/bayeshammer) which is part of SPAdes v3.5.0 genome assembly pipeline. The manual for this version is available [here](http://spades.bioinf.spbau.ru/release3.5.0/manual.html). BayesHammer is a Bayesian subclustering algorithm designed to identify and correct sequencing errors in illumina reads.
+
+`Command Line`
+
+    spades.py \
+      --only-error-correction \
+      -1 SRR2969230_1.fastq \
+      -2 SRR2969230_2.fastq \
+      -o CMSC702_spades_output      
 
 #### Datasets for Assembly
 
