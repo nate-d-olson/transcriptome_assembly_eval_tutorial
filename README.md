@@ -202,8 +202,8 @@ Conclusions
 -----------
 
 -   Read trimming has a greater impact on assembly size and number of contigs than error correction.
--   Read based assembly evaluation - potentially biased by the use of un-modified reads
--   No clear relationship between contig score and reference coverage
+-   Our read based assembly evaluation potentially biased by the use of un-modified reads to evalulate all four assemblies. The trimmed read assemblies might be penalized as some of the untrimmed reads were unable to align the to the trimmed read assemblies.
+-   We observed no clear relationship between contig score and reference coverage, this is potentially due to correct contigs shorter than the reference transcript having low reference coverage.
 
 Session Information
 -------------------
