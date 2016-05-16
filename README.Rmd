@@ -3,7 +3,7 @@ title: "Transcriptome Assembly and Evaluation"
 subtitle: "using Trinity and Transrate"
 author: "Nate Olson & Leann Biancani"
 date: "May 15, 2016"
-output: github_document
+output: [github_document, pdf_document]
 bibliography: tutorial.bib 
 ---
 ```{r setup, warning=FALSE, message=FALSE, echo = FALSE}
