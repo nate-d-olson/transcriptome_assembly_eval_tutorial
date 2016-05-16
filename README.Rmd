@@ -44,11 +44,12 @@ Two basic methods exist for evaluating transcriptomes. Reference based methods c
 #### Source data  
 A single set of raw RNA-seq reads for _C. elegans_ was identified and downloaded from the SRA database.
 
-shell commands:
+__Command Line__
 ```{bash, eval=FALSE}
 Fastq-dump -I --split-files SRR2969230
 ```
-Dataset Information:
+
+__Dataset Information:__
 
 * Accession number: SRR2969230
 * Description:
@@ -69,9 +70,11 @@ Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most impo
 
 #### Data Processing
 
-* Read Trimming
+__Read Trimming__
 
-* Error Correction
+RNA-seq reads were trimmed with [Trim Galore v0.4.0](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/). The user guide for this version is available [here](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/trim_galore_User_Guide_v0.4.0.pdf). Trim Galore is a wrapper script that automates adapter trimming and quality control using the programs [Cutadapt](https://cutadapt.readthedocs.io/en/stable/) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+
+__Error Correction__
 
 #### Datasets for Assembly
 Starting with a single set of RNA-seq reads, *de novo* assemblies were generated for 4 datasets each with a different level of data processing. These processing steps are included in order to improve the quality of the *de novo* assembly. We aim to investigate whether such improvement is detected by the assembly evaluation algorithm.
