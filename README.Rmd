@@ -113,7 +113,7 @@ assembly_metrics_df %>%
             caption = "Trinity _C. elegans_ transcriptome assembly summary metrics.")
 ```
 
-N50 is the length (bp) of contig where > 50% of assembled bases are in contigs at least as long
+N50 is the contig length (bp) where 50% of assembled bases are in contigs of this length or longer.
 
 ## Assembly evaluation
 ### Running TransRate
