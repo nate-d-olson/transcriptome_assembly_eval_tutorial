@@ -44,11 +44,12 @@ Two basic methods exist for evaluating transcriptomes. Reference based methods c
 #### Source data  
 A single set of raw RNA-seq reads for _C. elegans_ was identified and downloaded from the SRA database.
 
-shell commands:
-```{bash, eval=FALSE}
+`Command Line`
+```
 Fastq-dump -I --split-files SRR2969230
 ```
-Dataset Information:
+
+__Dataset Information:__
 
 * Accession number: SRR2969230
 * Description:
@@ -69,9 +70,22 @@ Abstract: Insulin/IGF-1 signaling (IIS) is a critical regulator of the most impo
 
 #### Data Processing
 
-* Read Trimming
+__Read Trimming__
 
-* Error Correction
+RNA-seq reads were trimmed with [Trim Galore v0.4.0](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/). The user guide for this version is available [here](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/trim_galore_User_Guide_v0.4.0.pdf). Trim Galore is a wrapper script that automates adapter trimming and quality control using the programs [Cutadapt](https://cutadapt.readthedocs.io/en/stable/) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/).
+Using the following commands, Trim Galore trims low quality base calls from the 3' end using a Phred score threshold of 20, finds and removes adapter sequences from the 3' end using standard Illumina paired-end adapter sequences, clips 5 base pairs from the 5' end to combat bias due to to the end-repair libary prep step, clips an additional 5 base pairs from the 3' end to further improve quality, and discards any reads that become shorter than 20 base pairs due to either quality filtering or trimming.
+
+`Command Line`
+```
+trim_galore -q 30 \
+  --paired \
+  --fastqc \
+  --clip_R1 5 --clip_R2 5 \
+  --three_prime_clip_R1 5 --three_prime_clip_R2 5 \
+  SRR2969230_1.fastq SRR2969230_2.fastq
+```
+
+__Error Correction__
 
 #### Datasets for Assembly
 Starting with a single set of RNA-seq reads, *de novo* assemblies were generated for 4 datasets each with a different level of data processing. These processing steps are included in order to improve the quality of the *de novo* assembly. We aim to investigate whether such improvement is detected by the assembly evaluation algorithm.
@@ -136,7 +150,7 @@ __Contig Score:__ the product of the following metrics.
 __Assembly Score__ is calculated from the mean contig score and proprotion of read pairs mapping to the assembly.  
 
 
-__Command Line__
+`Command Line`
 ```
 transrate \
   --left=SRR2969230_1.fastq \
@@ -149,7 +163,7 @@ transrate \
 Transrate uses a reciprical blast approach for reference based assembly evaluation. 
 A sequence is classified as the reference for a contig if the reference sequence and contig are the top BLAST hits when comparing the reference sequence against all contigs and comparing the contig againts all reference sequences. The reciprical BLAST method is described in @aubry2014deep. 
 
-__Command Line__
+`Command Line`
 ```
 transrate \
   --reference=Caenorhabditis_elegans.WBcel235.31.pep.all.fa \
