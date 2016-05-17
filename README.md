@@ -14,8 +14,6 @@ Transcriptomics is the study of the complete set of RNA transcripts in a given s
 
 *De novo* transcriptome assembly algorithms build contigs from RNA-seq data without the use of a reference genome. These assemblies, however, can be highly variable. There are many different algorithms available and a variety of parameters that can be specified for each method, resulting in the ability to generate multiple assemblies from a single set of reads (Smith-Unna et al. 2015). As such, it is necessary to be able to evaluate the quality and accuracy of a transcriptome assembly.
 
-Trinity (M. G. Grabherr et al. 2011, Haas et al. (2013))
-
 #### Transcriptome assembly evaluation
 
 Two basic methods exist for evaluating transcriptomes. Reference based methods compare the assembly to known genome or transcriptome sequences, while read based methods map the RNA-seq reads back to the assembly.
@@ -252,7 +250,7 @@ Session Information
     ##  language (EN)                        
     ##  collate  en_US.UTF-8                 
     ##  tz       America/New_York            
-    ##  date     2016-05-15
+    ##  date     2016-05-16
 
 | package    | \*  | version | date       | source                               |
 |:-----------|:----|:--------|:-----------|:-------------------------------------|
